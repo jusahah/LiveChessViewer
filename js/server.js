@@ -191,6 +191,27 @@
 
     }
 
+    this.getResultForPlayer = function(color) {
+
+      // Color comes in as 'white' or 'black' - we need only first letter;
+      var color = color[0];
+
+      if (this.result === 0) {
+        return '';
+      }
+
+      if (this.result === 'd') {
+        return '1/2';
+      }
+
+      if (color === this.result) {
+        return '1';
+      }
+
+      return '0';
+
+    }
+
     this.overrideMakeMove = function(move) {
 
       // Check if legal move right away using temporary chess.js object
@@ -269,6 +290,8 @@
 
         'white' : this.white,
         'black' : this.black,
+        'whiteResult': this.getResultForPlayer('white'),
+        'blackResult': this.getResultForPlayer('black'),
         'result': this.result,
         'gameID': this.gameID,
         'pos'   : this.chessJS.fen()
@@ -277,16 +300,7 @@
 
     this.setResult = function(result) {
 
-      if (result === 'w') {
-        this.result = 'white';
-      }
-      else if (result === 'b') {
-        this.result = 'black';
-      } 
-      else if (result === 'd') {
-        this.result = 'draw';
-      }
-      else {
+      if (result !== 'w' && result !== 'd' && result !== 'b') {
         return {error: 'Server error! Result was not set for game ' + this.gameID, reason: 'Unknown result type'};
       }
 

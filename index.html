@@ -6,10 +6,7 @@
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
-      ul.pelitLista li {
 
-        margin-top: 4px;
-      }
     </style>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/chessboard-0.3.0.css">
@@ -21,12 +18,26 @@
   <body>
 
 <div id="liveViewerApp"> 
-<div id="notificationsBar" class="innerPanel" style="position: absolute; top: -2px; left: 40px; width: 650px; height: 60px; font-size: 14px; color: white;">
+<div id="notificationsBar" class="innerPanel" style="position: absolute; top: 10px; left: 65px; width: 640px; height: 40px; font-size: 14px; color: white;">
 
   
 </div> 
 
-<div id="ss_pelit" style="position: absolute; top:0px; left: 500px; width: 90px; height: 600px;"></div>
+<div id="ss_pelit" class="innerPanel" style="position: absolute; bottom:20px; left: 65px; width: 640px; height: 110px;">
+  <div id="selectGamesShow" class="panelTab all" style="position: absolute; top: 4px; left: -55px; width: 44px; height: 46px; border: 1px solid #BBB;">Show Running</div>
+  
+
+  <ul id="pelitUL" class="pelitLista2" data-joo="wee">
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntylä</span> <span class="whiteResultSpan">1/2</span><span class="blackResultSpan">1/2</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan"></span><span class="blackResultSpan"></span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntylä</span> <span class="whiteResultSpan">1/2</span><span class="blackResultSpan">1/2</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan"></span><span class="blackResultSpan"></span></li>    
+  </ul>
+</div>
 <div id="kibitzView" class="ss_view" style="display: none;">  
   <div id="ss_peliHeaders" style="position: absolute; top: 0px; left: 0px; height: 100px; width: 400px; background-color: red;">
     <div id="whiteName"></div>
@@ -39,7 +50,7 @@
       
 
 
-  <div id="testiButtons" style="position: absolute; top: 500px; left: 0px; height: 100px; width: 400px;">
+  <div id="testiButtons" style="position: absolute; top: 500px; left: 0px; height: 40px; width: 400px;">
     
     <button id="traversalButton">Traverse</button>
     <button id="alkuunButton">Alkuun</button>
@@ -343,6 +354,10 @@
 
 
 jQuery(document).ready(function() {
+
+  $('body').click(function(e) {
+    console.log(e);
+  })
 
   var c = liveviewer.Constructors;
   var s = liveviewer.States;
@@ -680,7 +695,6 @@ liveviewer.Constructors.CreationForm = function($el) {
     $(liveviewer).trigger('initialPositionClicked');
   }.bind(this));  
   this.submitGameB.on('click', function() {
-    alert('Submit Game clicked');
     $(liveviewer).trigger('submitGameClicked', [this.whiteInput.val(), this.blackInput.val()]);
   }.bind(this)); 
 
@@ -813,6 +827,27 @@ liveviewer.Constructors.PelitLista = function($el) {
     this.cachedGames;
     this.selectedID;
 
+    this.showModes = ['all', 'running', 'finished'];
+    this.currentShowMode = 0;
+
+    this.showSelection = $el.find('#selectGamesShow');
+
+    this.UL = $el.find('ul#pelitUL');
+
+    this.toggleShowSelection = function() {
+
+      this.currentShowMode++;
+
+      if (this.currentShowMode > (this.showModes.length-1)) {
+        this.currentShowMode = 0;
+      }
+
+      this.showSelection.empty().append("Show " + this.showModes[this.currentShowMode]);
+      this.showSelection.removeClass('all running finished').addClass(this.showModes[this.currentShowMode]);
+      this.updateAll();
+
+    }
+
     this.dropGameSelection = function() {
 
       this.selectedID = 0;
@@ -823,28 +858,69 @@ liveviewer.Constructors.PelitLista = function($el) {
 
     }
 
-    this.updateAll = function(games) {
-
+    this.receiveGames = function(games) {
       this.cachedGames = games;
-      var html = '<ul class="pelitLista">';
+      this.updateAll();
+    }
+
+    this.isEnded = function(game) {
+      return game.result !== 0;
+    }
+
+    this.isRunning = function(game) {
+      return game.result === 0;
+    }
+
+    this.getFilteredGames = function(f) {
+
+      var filtered = [];
+
+      for (key in this.cachedGames) {
+        if (f(this.cachedGames[key])) {
+          filtered.push(this.cachedGames[key]);
+        }
+      }
+      return filtered;
+    }
+
+    this.updateAll = function() {
+
+      var games = this.cachedGames;
+      console.log(games);
+
+      if (this.currentShowMode === 1) {
+        games = this.getFilteredGames(this.isRunning);
+      }
+      else if (this.currentShowMode === 2) {
+        games = this.getFilteredGames(this.isEnded);
+      }
+
+      var html = '';
       var cssClass;
       for (key in games) {
         var gameInfo = games[key];
         cssClass = this.selectedID === gameInfo.gameID ? 'selectedGame' : 'notSelectedGame';
-        html += "<li data-gameID='" + gameInfo.gameID + "' class='" + cssClass + "'>" + gameInfo.white + " vs. " + gameInfo.black + " | " + gameInfo.result + "</li>";
-      }
+        html += "<li data-gameID='" + 
+        gameInfo.gameID + "' class='" + 
+        cssClass + "'>" + 
+        "<span class='whitePlayerSpan'>" + gameInfo.white + "</span>" + 
+        "<span class='blackPlayerSpan'>" + gameInfo.black + "</span>" + 
+        "<span class='whiteResultSpan'>" + gameInfo.whiteResult + "</span>" + 
+        "<span class='blackResultSpan'>" + gameInfo.blackResult + "</span></li>";
 
-      html += "</ul>";
-      this.$el.empty().append(html);
+
+      }
+      this.UL.empty().append(html);
 
     }
+
 
     $(liveviewer).on('kibitzEnded', function() {
       this.dropGameSelection();
     }.bind(this));
 
     $(liveviewer).on('gameListUpdate', function(e, games) {
-      this.updateAll(games);
+      this.receiveGames(games);
     }.bind(this));
 
     $(liveviewer).on('updateSelectedGame', function(e, gameID) {
@@ -860,14 +936,23 @@ liveviewer.Constructors.PelitLista = function($el) {
 
     }.bind(this));
 
+    this.showSelection.on('click', function() {
+      this.toggleShowSelection();
+    }.bind(this));
+
     this.$el.on('click', function(e) {
-
       if (e.target.tagName.toUpperCase() === "LI") {
-        var gameID = $(e.target).attr('data-gameID');
-        $(liveviewer).trigger('gameSelectedFromGameList', [gameID]);
 
+        var gameID = $(e.target).attr('data-gameID');        
       }
-
+      else if (e.target.tagName.toUpperCase() === "SPAN" && $(e.target).parent().prop('tagName').toUpperCase() === "LI") {    
+  
+        var gameID = $(e.target).parent().attr('data-gameID');
+      }
+      else {
+        return;
+      }
+      $(liveviewer).trigger('gameSelectedFromGameList', [gameID]);
 
     });
 
@@ -1315,7 +1400,6 @@ liveviewer.Constructors.StateController = function() {
   }
 
   this.kibitzGame = function(gameID) {
-
     if (this.currentState.name === 'kibitz' || this.stateChange(new liveviewer.States.KibitzState())) {
       this.currentState.stateVars.currentGame = gameID;
       $(liveviewer).trigger('loadingGame');
@@ -1451,11 +1535,10 @@ liveviewer.Constructors.StateController = function() {
   }
 
   $(liveviewer).on('submitGameClicked', function(e, white, black) {
-    alert(white + " | " + black);
     if (this.isState('creation')) {
       if (this.currentState.validateData(white, black)) {
         console.log("Validation success");
-        alert(this.currentState.getPosition());
+        this.currentState.getPosition();
         liveviewer.netWork.submitNewGame(liveviewer.tournamentID, white, black, this.currentState.getPosition());
         this.stateChange(new liveviewer.States.LobbyState());
       }
@@ -1919,7 +2002,7 @@ $(liveviewer).on('stateChangeConfirmed', function(e, to) {
 
   else if (to.name === 'lobby') {
 
-    $('body').css('background-color', '#ffce72');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   else if (to.name === 'creation') {
