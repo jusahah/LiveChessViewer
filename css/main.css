@@ -1,0 +1,497 @@
+/* ==========================================================================
+   HTML5 Boilerplate styles - h5bp.com (generated via initializr.com)
+   ========================================================================== */
+
+html,
+button,
+input,
+select,
+textarea {
+    color: #222;
+}
+
+body {
+    font-size: 1em;
+    line-height: 1.4;
+    background: #EEEEEE;
+}
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+img {
+    vertical-align: middle;
+}
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+div#ss_app_container {
+
+    width: 800px;
+    height: 700px;
+    margin: auto;
+    margin-top: 10px;
+    background-color: #dcdcdc;
+    padding: 10px;
+    position: relative;
+}
+
+div.mainNakyma {
+
+    width: 750px;
+    height: 600px;
+    background: #989898;
+    position: absolute;
+    bottom: 20px;
+    left: 24px;
+}
+div.lobbyModule {
+
+    width: 250px;
+    height: 280px;
+    position: absolute;
+}
+
+div.lobbyWideModule {
+
+    width: 470px;
+    height: 120px;
+    position: absolute;
+
+}
+
+div.lobbyPlayers {
+
+    top: 10px;
+    left: 10px;
+    background-color: red;
+}
+
+div.lobbyGames {
+
+    top: 300px;
+    left: 10px;
+    background-color: yellow;
+}
+
+div.lobbyHaasteet {
+
+    top: 10px;
+    right: 10px;
+    background-color: green;
+
+
+}
+
+div.noShowInit {
+
+    display: none;
+}
+
+li {
+
+    list-style: none;
+}
+
+div.gameTop {
+
+    width: 395px;
+    height: 40px;
+    top: 0px;
+    left: 0px;
+    background-color: green;
+    position: absolute;
+}
+
+div.gameBottom {
+
+    width: 395px;
+    height: 40px;
+    bottom: -65px;
+    left: 0px;
+    background-color: blue;
+    position: absolute;
+
+
+
+}
+
+div.gameLauta {
+
+    width: 400px;
+    height: 400px;
+    top: 50px;
+    left: 0px;
+    position: absolute;
+}
+
+div.gameOikea, div.gameVasen {
+
+    width: 160px;
+    height: 400px;
+    top: 60px;
+    background-color: yellow;
+    position: absolute;
+
+}
+
+div.gameKeski {
+
+    width: 400px;
+    height: 430px;
+    top: 10px;
+    left: 180px;
+    position: absolute;
+}
+
+div.gameVasen {
+
+    left: 10px;   
+}
+
+div.gameOikea {
+
+    right: 10px;   
+}
+
+/* Kellot */
+
+div#ss_omaKello, div#ss_vihuKello  {
+
+    width: 140px;
+    height: 60px;
+    right: 10px;
+    position: absolute;
+    background-color: red;
+    
+
+    
+}
+
+div#ss_omaKello {
+
+    bottom: 10px;
+}
+
+div#ss_vihuKello {
+
+    top: 10px;
+}
+
+/* Pelaajat-lista */
+
+ul#pelaajatUL li {
+
+    background-color: green;
+}
+
+ul#pelaajatUL li.notOpenForChallenges {
+
+    background-color: orange;
+}
+
+ul#msgStream {
+
+    width: 400px;
+    height: 300px;
+    overflow: auto;
+    margin: auto;
+}
+ul#msgStream li {
+
+    width: 80%;
+    font-size: 12px;
+}
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+
+div.innerPanel {
+
+    border: 1px solid #777;
+    position: absolute;
+    background-color: #555;
+
+}
+
+div#liveViewerApp {
+
+    width: 700px;
+    height: 750px;
+    margin: auto;
+    margin-top: 20px;
+    background-color: #5F94BD;
+    border: 2px solid #777;
+    position: relative;
+
+}
+
+
+div.ss_view {
+
+    border: 1px solid #BBB;
+    position: absolute;
+    top: 60px;
+    left: 40px;
+    width: 650px;
+    height: 550px;
+    background-color: #EEE;
+
+}
+
+
+div.squareClicked {
+
+    border-style: solid;
+    border-width: 2px;
+    border-color: red;
+}
+
+.onButton {
+
+    background-color: green;
+}
+
+.offButton {
+
+    background-color: red;
+}
+
+.selectedGame {
+
+    background-color: #628eec;
+
+}
+
+.notSelectedGame {
+
+    background-color: #de8112;
+}
+
+.selectedPiece {
+
+    border-style: solid;
+    border-width: 2px;
+    border-color: red;
+}
+
+ul.logsList li.danger {
+
+    color: red;
+}
+
+ul.logsList li.info {
+
+    color: blue;
+}
+
+ul.logsList li.warning {
+
+    color: yellow;
+}
+
+ul.logsList li.success {
+
+    color: green;
+}
+
+
+
+
+
+
+
+
+/* ==========================================================================
+   Media Queries
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+.invisible {
+    visibility: hidden;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   Print styles
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

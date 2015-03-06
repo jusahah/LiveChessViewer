@@ -1,0 +1,1954 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      ul.pelitLista li {
+
+        margin-top: 4px;
+      }
+    </style>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/chessboard-0.3.0.css">
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="js/chessboard-0.3.0.min.js"></script>
+    <script src="chess.js"></script>
+    <script src="js/server.js"></script>
+  </head>
+  <body>
+
+<div id="liveViewerApp"> 
+<div id="notificationsBar" class="innerPanel" style="position: absolute; top: -2px; left: 40px; width: 650px; height: 60px; font-size: 14px; color: white;">
+
+  
+</div> 
+
+<div id="ss_pelit" style="position: absolute; top:0px; left: 500px; width: 90px; height: 600px;"></div>
+<div id="kibitzView" class="ss_view" style="display: none;">  
+  <div id="ss_peliHeaders" style="position: absolute; top: 0px; left: 0px; height: 100px; width: 400px; background-color: red;">
+    <div id="whiteName"></div>
+    <div id="blackName"></div>
+    <div id="result"></div>
+  </div>
+
+      <div id="ss_lauta" class="gameLauta" style="display: none; position: absolute; top: 100px;"> </div>
+
+      
+
+
+  <div id="testiButtons" style="position: absolute; top: 500px; left: 0px; height: 100px; width: 400px;">
+    
+    <button id="traversalButton">Traverse</button>
+    <button id="alkuunButton">Alkuun</button>
+    <button id="taakseButton">Taakse</button>
+    <button id="eteenButton">Eteen</button>
+    <button id="loppuunButton">Loppuun</button>
+    <button id="liveButton">Live</button>
+    <button id="palaaButton">Palaa</button>
+    <button id="toLobbyFromKibitzButton">Lobby</button>
+    <button id="openIrreversiblesButton">Admin-toiminnot</button>
+
+    <div id="irreversiblesBar" style="display: none;"> 
+      <button id="whiteWinsButton">1-0</button>
+      <button id="drawButton">1/2-1/2</button>
+      <button id="blackWinsButton">0-1</button>
+
+    </div>
+  </div>
+</div>
+
+<div id="logView" class="ss_view" style="display: none;">
+  <h3>Logi</h3>
+  <ul class="logsList" id="logUL"></ul>
+  <button id="backToLobbyButton">Back to Lobby</button>
+</div>
+
+<div id="lobbyView" class="ss_view" style="display: none;">
+  <h3>Welcome to lobby</h3>
+  <button id="luoPeli">Luo Peli</button>
+  <button id="showLogButton">Näytä logi</button>
+</div>
+<div id="creationView" class="ss_view" style="display: none;">
+  <h3>Welcome to creation view</h3>
+  <div id="creationForm">
+  <input type="text" id="whiteInput" placeholder="White player name">
+  <input type="text" id="blackInput" placeholder="Black player name">
+  <button id="initialPositionSelect">Start Position</button>
+  <button id="customPositionSelect">Custom Position</button>
+  <div id="currentPositionSelected">
+    <p id="positionInfo"></p>
+  </div>
+  <h5>Only this position (no real time broadcasting)</h5>
+  <input type="checkbox" id="snapShotOnly">
+  <button id="vahvistaPeli">Submit Game</button>
+  <button id="cancelCreationButton">Cancel Creation</button>
+  </div>
+  
+</div>
+<div id="setupPositionView" class="ss_view" style="display: none;">
+  <h3>Welcome to setup position view</h3>
+  <div id="setupBoardWrapper">
+    <div id="setupBoard" class="gameLauta" style="position: absolute; top: 100px;">
+    </div>
+    <div id="valkeatNappulat" class="spare-pieces-7492f spare-pieces-bottom-ae20f" style="padding-left: 51px; left: 20px; top: 500px; position: absolute;">
+    <img id="wK-a8c6-252c-1181-93cb-93aa-cf9d-8cae-ddc3" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wK" alt="" src="img/chesspieces/wikipedia/wK.png">
+    <img id="wQ-537b-6b1b-765c-78b0-d2d5-c639-6d96-74ed" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wQ" alt="" src="img/chesspieces/wikipedia/wQ.png">
+    <img id="wR-964f-f468-114c-99ca-2182-c6e4-7c4b-0b6e" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wR" alt="" src="img/chesspieces/wikipedia/wR.png">
+    <img id="wB-91f0-87f4-ed5b-f687-2e27-7754-920a-a04d" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wB" alt="" src="img/chesspieces/wikipedia/wB.png">
+    <img id="wN-0394-99a7-1118-0e4d-53ed-201a-bb99-2691" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wN" alt="" src="img/chesspieces/wikipedia/wN.png">
+    <img id="wP-cc9b-023a-9299-9101-e529-495a-809f-bc69" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wP" alt="" src="img/chesspieces/wikipedia/wP.png">
+    </div>
+    <div id="mustatNappulat" class="spare-pieces-7492f spare-pieces-top-4028b" style="padding-left: 51px; left: 20px; top: 50px; position: absolute;">
+    <img id="bK-e688-7bd4-39dd-5439-ec7d-59f1-74c3-14de" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bK" alt="" src="img/chesspieces/wikipedia/bK.png">
+    <img id="bQ-c5b4-e811-069a-d8c0-cfed-6c8b-34c0-eb5c" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bQ" alt="" src="img/chesspieces/wikipedia/bQ.png">
+    <img id="bR-086e-12bb-90a1-039d-b45d-1e8c-f44a-b6cc" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bR" alt="" src="img/chesspieces/wikipedia/bR.png">
+    <img id="bB-f5a5-ad9c-f980-ef9b-b3fa-c430-e5c8-c724" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bB" alt="" src="img/chesspieces/wikipedia/bB.png">
+    <img id="bN-6c39-547e-6bbc-b7e2-1dc2-8182-cc9c-feaf" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bN" alt="" src="img/chesspieces/wikipedia/bN.png">
+    <img id="bP-8c21-1739-ffa2-41b6-e873-a0cf-0a84-0abd" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bP" alt="" src="img/chesspieces/wikipedia/bP.png">
+    </div>
+    <button id="cancelSetupButton">Cancel setup</button>
+    <button id="submitSetupButton">Submit setup</button>
+    <button id="initialSetupButton">Initial Position</button>
+    <input type="text" id="setupMoveNumber">
+    <select name="select" id="setupToMove">
+      <option value="w" selected>White</option> 
+      <option value="b">Black</option>
+    </select>
+    <select name="select" id="whiteCastle">
+      <option value="-" selected>None</option> 
+      <option value="K">Kingside</option>
+      <option value="Q">Queenside</option>
+      <option value="KQ">Both</option>
+    </select>  
+    <select name="select" id="blackCastle">
+      <option value="-" selected>None</option> 
+      <option value="k">Kingside</option>
+      <option value="q">Queenside</option>
+      <option value="kq">Both</option>
+    </select>       
+  </div>  
+  
+</div>
+</div>
+  <script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+///////////                 SERVER UP               /////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+//////////                  CLIENT DOWN             /////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+  var TestNetWork = function(controller) {
+    console.log("CREATING TestNetWork");
+    console.log(controller);
+
+    this.controller = controller;
+    this.adminKey = 'xsd';
+
+    this.server = new TestServer();
+
+    this.dispatchReturnObject = function(resObj) {
+
+      if (resObj.modUpdate) {
+        console.log("NETWORK: Mod update confirmed");
+        this.controller.runningModNumber = resObj.modUpdate.modNumber;
+        $(liveviewer).trigger('gameListUpdate', [resObj.modUpdate.listOfGames]);
+      }
+
+      // If there was an error, its saved into error-field.
+      // If there was no errors, error field is not present at all.
+      if (resObj.hasOwnProperty('error')) {
+        $(liveviewer).trigger('errorFromServer', [resObj.error]);
+        return;
+      }
+
+      var tag = resObj.tag;
+
+      if (tag === 'ajaxFail') {
+        $(liveviewer).trigger('operationFailed', [resObj]);
+      }
+      else if (tag === 'resultSet') {
+        console.log("NETWORK: Received result set confirmation");
+        console.log(resObj.content);
+        console.log(resObj.modUpdate);
+        this.controller.resultWasSet(resObj.content);
+        //$(liveviewer).trigger('resultWasSet', [resObj.gameID, resObj.result]);
+      }
+
+      else if (tag === 'gameFetch') {
+        console.log("NETWORK: Received game fetch");
+        console.log(resObj.content);        
+        this.controller.receivedGameData(resObj.content);
+      }
+
+      else if (tag === 'latestPositionFetch') {
+        console.log("NETWORK: Received position fetch");
+        console.log(resObj.content);
+        this.controller.positionArrivalFromNet(resObj.content);
+      }
+      else if (tag === 'allPositionsFetch') {
+        console.log("NETWORK: Received positions for traversal");
+        console.log(resObj.content);
+        this.controller.receivedAllPositions(resObj.content.gameID, resObj.content.positions);
+      }
+
+      else if(tag === 'newGameCreated') {
+        console.log("NETWORK: Received game creation message");
+        console.log(resObj.content);
+        this.controller.gameCreated(resObj.content);
+      }
+
+
+    }
+
+    this.send = function(tag, msgObj) {
+
+      msgObj.modNumber = this.controller.runningModNumber;
+      msgObj.adminKey = this.adminKey;
+      msgObj.tournamentID = liveviewer.tournamentID;
+
+      setTimeout(function() {
+        console.log("NETWORK: Sending msg to server");
+        var resObj = this.server.adminAPI(tag, msgObj);
+        return this.dispatchReturnObject(resObj);
+        if (resObj) {
+          console.log("NETWORK: New position arrived successfully: " + resObj);
+          $(liveviewer).trigger('positionUpdateArrived', [resObj]);
+        }
+      }.bind(this), 10);
+      
+
+
+    }
+
+    this.submitNewGame = function(tournamentID, white, black, position) {
+
+      console.log("TEST: Submitting new game creation request to server");
+
+      this.send('submitNewGame', {tournamentID: tournamentID, white: white, black: black, position: position});
+
+/*      var listOfGames = this.server.newGame(this.adminKey, tournamentID, white, black);
+      console.log("CLIENT: Received updated games list:");
+      console.log(listOfGames);
+      $(liveviewer).trigger('gameListUpdate', [listOfGames]);*/
+      
+
+    }
+
+    this.sendPossibleMove = function(gameID, move) {
+
+      setTimeout(function() {
+        console.log("NETWORK: Sending possible move to server: " + gameID + " | " + move);
+        var resObj = this.server.newPossibleMove(this.adminKey, gameID, move);
+        this.controller.moveAccepted(resObj);
+      }.bind(this),10);
+
+      console.log("TEST: Sending possible move to server | move:" + move + " , gameID: " + gameID);
+    }
+
+    this.fetchLatestPosition = function(gameID) {
+
+      console.log("TEST: Fetching latest position for game: " + gameID);
+
+      this.send('fetchLatestPosition', {gameID: gameID});
+
+/*      var position = this.server.getLatestPosition(gameID);
+      console.log(position);
+
+      if (position) {
+
+        $(liveviewer).trigger('positionUpdateArrived', [position]);
+      }
+
+      }.bind(this),10);*/
+    }
+
+    this.fetchGame = function(gameID) {
+
+      
+      console.log("Tä");
+      console.log(this);
+      this.send('fetchGame', {gameID: gameID});
+/*      var game = this.server.getGame(gameID);
+      this.controller.receivedGameData(game);*/
+      
+
+    }
+
+    this.fetchAllPositions = function(gameID) {
+
+      this.send('fetchAllPositions', {gameID: gameID});
+/*        var positions = this.server.getAllPositions(gameID);
+        console.log("NETWORK: Positions have arrived to client");
+        console.log(positions);
+        this.controller.receivedAllPositions(gameID, positions);
+      }.bind(this),10);*/
+
+    }
+
+    this.fetchAllMoves = function(gameID) {
+
+      console.log("TEST: Fetching game for traversal");
+    }
+
+    $(liveviewer).on('sendMoveToServer', function(e, gameID, move) {
+
+      this.sendPossibleMove(gameID, move);
+
+    }.bind(this));
+
+    $(liveviewer).on('fetchGameDataForKibitz', function(e, gameID) {
+
+      this.fetchGame(gameID);
+
+    }.bind(this));  
+
+    $(liveviewer).on('needAllPositionsForGame', function(e, gameID) {
+
+      this.fetchAllPositions(gameID);
+
+
+    }.bind(this));  
+  }
+
+  /// TESTERS END
+
+
+
+
+
+jQuery(document).ready(function() {
+
+  var c = liveviewer.Constructors;
+  var s = liveviewer.States;
+
+  liveviewer.board = new c.BoardWrapper($('div#ss_lauta'), new ChessBoard('ss_lauta', 'start'));
+  liveviewer.UI.pelitLista = new c.PelitLista($('#ss_pelit'));
+  liveviewer.UI.gameHeaders = new c.GameHeaders($('#ss_peliHeaders'));
+  liveviewer.UI.gameControls = new c.GameControls($('#testiButtons'));
+  liveviewer.UI.lobbyView = new c.LobbyView($('#lobbyView'));
+  liveviewer.UI.logView = new c.LogView($('#logView'));
+  liveviewer.UI.creationForm = new c.CreationForm($('#creationForm'));
+  liveviewer.UI.setupPositionBoard = new c.SetupBoardWrapper($('#setupBoardWrapper'), new ChessBoard('setupBoard', {draggable: false, appearSpeed: 1}));
+
+  liveviewer.viewSwitcher = new c.ViewSwitcher($('#kibitzView'), $('#lobbyView'), $('#creationView'), $('#setupPositionView'), $('#logView'));
+  liveviewer.notifications = new c.Notifications($('#notificationsBar'));
+
+  liveviewer.stateController = new c.StateController();
+  liveviewer.stateController.addState('kibitz', new s.KibitzState());
+  liveviewer.stateController.addState('traversal', new s.TraversalState());
+
+  liveviewer.stateController.initialState(new liveviewer.States.LobbyState());
+
+  liveviewer.board.showBoard();
+  liveviewer.traverser = new c.Traverser();
+  //liveviewer.board.prepareBoardForGame('black');
+
+  liveviewer.netWork = new TestNetWork(liveviewer.stateController);
+
+  // Testiturnauksen luonti testausta varten
+  var id = liveviewer.netWork.server.createTournament();
+  liveviewer.tournamentID = id;
+
+
+
+  // Testitarkoitukseen
+/*  var runner = 1;
+  var randomTag = ['danger', 'success', 'info', 'warning'];
+  var interval = setInterval(function() {
+    console.log("Interval hit");
+    $(liveviewer).trigger('notification', {tag: randomTag[Math.round(Math.random() * 4)], content: 'Testimessage' + (runner++)});
+
+  }, 1000);
+
+  setTimeout(function() {
+    console.log("--------");
+    console.log("INTERVAL DEAD");
+    console.log("--------");
+    clearInterval(interval);
+    interval = null;
+
+  }, 14000);*/
+
+
+});  
+
+// App Namespace
+var liveviewer = {};
+liveviewer.UI = {};
+liveviewer.States = {};
+liveviewer.tournamentID = 'sgh';
+
+// Constructors
+liveviewer.Constructors = {};
+
+liveviewer.Constructors.LobbyView = function($el) {
+
+  this.$el = $el;
+  this.luoPeliB = $el.find('#luoPeli');
+  this.showLogB = $el.find('#showLogButton');
+
+  this.luoPeliB.on('click', function() {
+    $(liveviewer).trigger('luoPeliClicked');
+  });
+  this.showLogB.on('click', function() {
+    $(liveviewer).trigger('showLogClicked');
+  });
+
+
+}
+
+liveviewer.Constructors.LogView = function($el) {
+
+  this.$el = $el;
+  this.logUL = $el.find('ul#logUL');
+  this.backToLobbyB = $el.find('#backToLobbyButton');
+
+  this.backToLobbyB.on('click', function() {
+    $(liveviewer).trigger('backToLobbyClicked');
+  });
+
+  $(liveviewer).on('hereAreLogs', function(e, logs) {
+    this.logUL.empty();
+    var html = '';
+    var log;
+    for (key in logs) {
+      log = logs[key];
+      var date = new Date();
+      date.setTime(log.time);
+
+      html += "<li class='" + log.msg.tag + "'>At " + date.getHours() + ":" + date.getMinutes() + " | " + log.msg.content + "</li>"; 
+    }
+    this.logUL.append(html);
+
+  }.bind(this));
+
+}
+
+liveviewer.Constructors.Notifications = function($el) {
+
+  var NOTIFICATION_TYPES = ['danger', 'warning', 'success', 'info'];
+  this.$el = $el;
+  this.notificationHistory = [];
+
+  this.screenQueue = [];
+  this.screenFull;
+
+
+  this.newNotification = function(msg) {
+
+    if (NOTIFICATION_TYPES.indexOf(msg.tag) === -1) {
+      // Not supported notification
+      return false;
+    }
+
+    this.notificationHistory.unshift({time: Date.now(), msg: msg});
+
+    if (this.screenQueue.length > 5) {
+      // Too much traffic on notification panel
+      return true;
+    }
+
+    this.screenQueue.push(msg);
+    this.checkQueue();
+
+  }
+
+  this.checkQueue = function() {
+    console.log("NOTIFICATIONS: Checking queue");
+
+    if (this.screenFull) {
+      return;
+    }
+    var l = this.screenQueue.length;
+    if (l > 0) {
+      var msg = this.screenQueue.shift();
+      this.showOnScreen(msg);
+      this.screenFull = true;
+      setTimeout(function() {
+        this.screenFull = false;
+        this.checkQueue();
+      }.bind(this), 5000 / (l+1) + 1500);
+    }
+  }
+
+  this.showOnScreen = function(msg) {
+    this.$el.empty().append(msg.tag.toUpperCase() + ": " + msg.content);
+  }
+
+  $(liveviewer).on('notification', function(e, msg) {
+
+    this.newNotification(msg);
+  }.bind(this));
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, to) {
+
+    if (to.name === 'log') {
+      $(liveviewer).trigger('hereAreLogs', [this.notificationHistory.slice(0, 100)])
+    }
+
+
+  }.bind(this));
+
+
+}
+
+liveviewer.Constructors.SetupBoardWrapper = function($el, chessBoardInstance) {
+
+  this.$el = $el;
+  this.chessBoardInstance = chessBoardInstance;
+
+  this.selectedPiece;
+  this.selectedPieceEl;
+
+  this.board = this.$el.find('#setupBoard');
+  this.mustat = this.$el.find('#mustatNappulat');
+  this.valkeat = this.$el.find('#valkeatNappulat');
+
+  this.submitB = this.$el.find('#submitSetupButton');
+  this.cancelB = this.$el.find('#cancelSetupButton');
+  this.initialB = this.$el.find('#initialSetupButton');
+
+  this.setupMoveNumber = this.$el.find('#setupMoveNumber');
+  this.setupToMove = this.$el.find('#setupToMove');
+
+  this.whiteCastle = this.$el.find('#whiteCastle');
+  this.blackCastle = this.$el.find('#blackCastle');
+
+  this.selectPiece = function(pieceCode) {
+
+    if (this.selectedPieceEl) {
+      this.selectedPieceEl.removeClass('selectedPiece');
+    }
+
+    var el;
+    
+    if (pieceCode[0] === 'w') {
+      el = this.valkeat.find('[data-piece="' + pieceCode + '"]');
+    }
+    else if (pieceCode[0] === 'b') {
+      el = this.mustat.find('[data-piece="' + pieceCode + '"]');
+    }
+
+    el.addClass('selectedPiece');
+    this.selectedPieceEl = el;
+    this.selectedPiece = pieceCode;
+  }
+
+  this.setPieceToSquare = function(sq) {
+
+    var position = this.chessBoardInstance.position();
+    position[sq] = this.selectedPiece;
+    this.chessBoardInstance.position(position);
+    console.log(position);
+
+    $(liveviewer).trigger('setupBoardPositionUpdated', [this.chessBoardInstance.fen()]);
+
+  }
+
+  $(liveviewer).on('setSetupBoardPosition', function(e, position) {
+    if (position) {
+      this.chessBoardInstance.position(position);
+    }
+  }.bind(this));
+
+  $(liveviewer).on('emptySetupBoard', function() {
+    this.chessBoardInstance.clear();
+    this.setupMoveNumber.val('');
+  }.bind(this));
+
+  this.board.on('click', function(e) {
+
+    console.log(e.target);
+
+    if (e.target.tagName.toUpperCase() === 'IMG') {
+      // There is piece in the square
+      console.log("Ruudussa on nappula");
+      console.log(e.target);
+      //$(liveviewer).trigger('setupBoardClicked', [$(e.target.parent).attr('data-square')]);
+      var sq = $(e.target).parent().attr('data-square');
+      this.setPieceToSquare(sq);
+    }
+    else if (e.target.tagName.toUpperCase() === 'DIV') {
+      // Empty square
+      //$(liveviewer).trigger('setupBoardClicked', [$(e.target).attr('data-square')]);
+      this.setPieceToSquare($(e.target).attr('data-square'));
+    }
+
+  }.bind(this));
+
+  this.mustat.on('click', function(e) {
+
+    console.log(e.target);
+
+    if (e.target.tagName.toUpperCase() === 'IMG') {
+      this.selectPiece($(e.target).attr('data-piece'));
+    }
+  }.bind(this));
+
+  this.valkeat.on('click', function(e) {
+
+    console.log(e.target);
+
+    if (e.target.tagName.toUpperCase() === 'IMG') {
+      this.selectPiece($(e.target).attr('data-piece'));
+    
+    }
+  }.bind(this));
+
+  this.cancelB.on('click', function() {
+    $(liveviewer).trigger('cancelSetupClicked');
+  });
+
+  this.submitB.on('click', function() {
+    var moveNumber = this.setupMoveNumber.val();
+    var toMove = this.setupToMove.val();
+    var whiteCastling = this.whiteCastle.val();
+    var blackCastling = this.blackCastle.val();
+
+    $(liveviewer).trigger('submitSetupClicked', [moveNumber, toMove, whiteCastling, blackCastling]);
+  }.bind(this));
+
+  this.initialB.on('click', function() {
+    this.setupMoveNumber.val(1);
+    this.setupToMove.val('w');
+    this.whiteCastle.val('KQ');
+    this.blackCastle.val('kq');
+    $(liveviewer).trigger('initialSetupClicked');
+  }.bind(this));
+
+
+}
+
+liveviewer.Constructors.CreationForm = function($el) {
+
+  this.$el = $el;
+
+  this.whiteInput = this.$el.find('#whiteInput');
+  this.blackInput = this.$el.find('#blackInput');
+  this.customPosB = this.$el.find('#customPositionSelect');
+  this.initialPosB = this.$el.find('#initialPositionSelect');
+  this.submitGameB = this.$el.find('#vahvistaPeli');
+  this.cancelCreationB = this.$el.find('#cancelCreationButton');
+
+
+
+  this.positionInfo = this.$el.find('#positionInfo');
+
+  $(liveviewer).on('emptyCreationForm', function() {
+    this.whiteInput.val('');
+    this.blackInput.val('');
+
+  }.bind(this));
+
+  $(liveviewer).on('creationFormUIUpdate', function(e, position) {
+    console.log("CREATIONFORM: Updating position info field");
+    this.positionInfo.empty().append(position);
+  }.bind(this));
+
+  // Later, use only one listeners for all
+
+  this.customPosB.on('click', function() {
+    $(liveviewer).trigger('customPositionClicked');
+  }.bind(this));
+  this.initialPosB.on('click', function() {
+    $(liveviewer).trigger('initialPositionClicked');
+  }.bind(this));  
+  this.submitGameB.on('click', function() {
+    alert('Submit Game clicked');
+    $(liveviewer).trigger('submitGameClicked', [this.whiteInput.val(), this.blackInput.val()]);
+  }.bind(this)); 
+
+  this.cancelCreationB.on('click', function() {
+    $(liveviewer).trigger('cancelCreationClicked');
+  }.bind(this));    
+}
+
+liveviewer.Constructors.GameControls = function($el) {
+
+  this.$el = $el;
+  this.traversalB = $el.find('#traversalButton');
+  this.alkuunB = $el.find('#alkuunButton');
+  this.liveB = $el.find('#liveButton');
+  this.taakseB = $el.find('#taakseButton');
+  this.eteenB = $el.find('#eteenButton');
+  this.palaaB = $el.find('#palaaButton');
+  this.loppuunB = $el.find('#loppuunButton');
+  this.toLobbyB = $el.find('#toLobbyFromKibitzButton');
+
+  this.openIrreversiblesB = $el.find('#openIrreversiblesButton');
+
+  this.irreversiblesBar = $el.find('#irreversiblesBar');
+
+  this.whiteWinsB = this.irreversiblesBar.find('#whiteWinsButton');
+  this.drawB = this.irreversiblesBar.find('#drawButton');
+  this.blackWinsB = this.irreversiblesBar.find('#blackWinsButton');
+
+  this.irreversibleOpen = false;
+
+  this.highLightLive = function() {
+
+    this.liveB.removeClass('offButton').addClass('onButton');
+  }
+
+  this.dimLive = function() {
+
+    this.liveB.removeClass('onButton').addClass('offButton');
+  }
+
+  $(liveviewer).on('internalStateChange', function(e, state) {
+
+    if (state.name === 'kibitz') {
+
+      if (state.stateVars.hasEnded) {
+        this.dimLive();
+      }
+      else {
+        this.highLightLive();
+      }
+    }
+
+
+  }.bind(this));
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, state) {
+
+    if (state.name === 'kibitz') {
+      this.highLightLive();
+    }
+    else {
+      this.dimLive();
+    }
+
+
+  }.bind(this));
+
+  this.openIrreversiblesB.on('click', function() {
+
+    if (this.irreversibleOpen) {
+      this.irreversiblesBar.hide();
+      this.irreversibleOpen = false;
+    }
+    else {
+      this.irreversiblesBar.show();
+      this.irreversibleOpen = true;      
+    }
+    
+  }.bind(this));
+
+  // Later, use only one listeners for all
+  this.whiteWinsB.on('click', function() {
+    if (this.irreversibleOpen) {
+      $(liveviewer).trigger('resultClicked', ['w']);
+    } 
+  }.bind(this));
+  this.drawB.on('click', function() {
+    if (this.irreversibleOpen) {
+      $(liveviewer).trigger('resultClicked', ['d']);
+    }
+  }.bind(this));
+  this.blackWinsB.on('click', function() {
+    if (this.irreversibleOpen) {
+      $(liveviewer).trigger('resultClicked', ['b']);
+    }
+  }.bind(this));
+
+  this.toLobbyB.on('click', function() {
+    $(liveviewer).trigger('toLobbyClicked');
+  });
+  this.loppuunB.on('click', function() {
+    $(liveviewer).trigger('loppuunClicked');
+  });
+  this.alkuunB.on('click', function() {
+    $(liveviewer).trigger('alkuunClicked');
+  });
+  this.taakseB.on('click', function() {
+    $(liveviewer).trigger('taakseClicked');
+  });
+  this.liveB.on('click', function() {
+    $(liveviewer).trigger('liveClicked');
+  });
+  this.eteenB.on('click', function() {
+    $(liveviewer).trigger('eteenClicked');
+  });
+  this.traversalB.on('click', function() {
+    $(liveviewer).trigger('traversalClicked');
+  });
+  this.palaaB.on('click', function() {
+    console.log("Palaa button clicked");
+    $(liveviewer).trigger('palaaClicked');
+  });
+}
+
+//liveviewer.network = new TestNetWork();
+
+liveviewer.Constructors.PelitLista = function($el) {
+
+    this.$el = $el;
+    this.cachedGames;
+    this.selectedID;
+
+    this.dropGameSelection = function() {
+
+      this.selectedID = 0;
+
+      if (this.cachedGames && (typeof this.cachedGames === 'object' || typeof this.cachedGames === 'array')) {
+        this.updateAll(this.cachedGames);
+      }
+
+    }
+
+    this.updateAll = function(games) {
+
+      this.cachedGames = games;
+      var html = '<ul class="pelitLista">';
+      var cssClass;
+      for (key in games) {
+        var gameInfo = games[key];
+        cssClass = this.selectedID === gameInfo.gameID ? 'selectedGame' : 'notSelectedGame';
+        html += "<li data-gameID='" + gameInfo.gameID + "' class='" + cssClass + "'>" + gameInfo.white + " vs. " + gameInfo.black + " | " + gameInfo.result + "</li>";
+      }
+
+      html += "</ul>";
+      this.$el.empty().append(html);
+
+    }
+
+    $(liveviewer).on('kibitzEnded', function() {
+      this.dropGameSelection();
+    }.bind(this));
+
+    $(liveviewer).on('gameListUpdate', function(e, games) {
+      this.updateAll(games);
+    }.bind(this));
+
+    $(liveviewer).on('updateSelectedGame', function(e, gameID) {
+
+      if (this.selectedID) {
+        var oldSelected = this.$el.find('[data-gameID="' + this.selectedID + '"]');
+        oldSelected.removeClass('selectedGame').addClass('notSelectedGame');
+      }
+
+      var el = this.$el.find('[data-gameID="' + gameID + '"]');
+      el.removeClass('notSelectedGame').addClass('selectedGame');
+      this.selectedID = gameID;
+
+    }.bind(this));
+
+    this.$el.on('click', function(e) {
+
+      if (e.target.tagName.toUpperCase() === "LI") {
+        var gameID = $(e.target).attr('data-gameID');
+        $(liveviewer).trigger('gameSelectedFromGameList', [gameID]);
+
+      }
+
+
+    });
+
+
+}
+
+liveviewer.States.LobbyState = function() {
+
+  this.stateVars = {
+
+  };
+
+  this.name = 'lobby';
+  this.goTos = ['kibitz', 'creation', 'log'];
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+  this.getParamsToPassAlong = function(state) {
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+    return null;
+
+  }
+  this.leavingThisState = function() {
+
+    
+  }
+}
+
+liveviewer.States.TraversalState = function() {
+
+  this.stateVars = {
+    'currentGame': 0,
+    'overrideOn' : true
+  };
+
+  this.currentGame;
+  this.name = 'traversal';
+
+  this.goTos = ['kibitz', 'traversal', 'lobby'];
+
+  this.setCurrentGame = function(gameID) {
+
+    this.currentGame = gameID;
+    $(liveviewer).trigger('kibitzedGameChanged', [gameID]);
+  }
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+  this.getParamsToPassAlong = function(state) {
+
+    if (state.name === 'kibitz' || state.name === 'traversal') {
+      return {
+        'currentGame': this.stateVars.currentGame
+      };   
+    }
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    if (params && params.hasOwnProperty('currentGame')) {
+      this.stateVars.currentGame = params.currentGame;
+    }
+
+  }
+  this.leavingThisState = function() {
+
+    
+  }
+}
+
+liveviewer.States.KibitzState = function() {
+
+  this.stateVars = {
+    'currentGame': 0,
+    'hasEnded': false
+  };
+
+  this.currentGame;
+  this.name = 'kibitz';
+
+  this.goTos = ['kibitz', 'traversal', 'lobby'];
+
+  this.setCurrentGame = function(gameID) {
+
+    this.currentGame = gameID;
+    $(liveviewer).trigger('kibitzedGameChanged', [gameID]);
+  }
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+  this.getParamsToPassAlong = function(state) {
+
+    if (state.name === 'kibitz' || state.name === 'traversal') {
+      return {
+        'currentGame': this.stateVars.currentGame
+      };   
+    }
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    if (params && params.hasOwnProperty('currentGame')) {
+      this.stateVars.currentGame = params.currentGame;
+    }
+
+  }
+  this.leavingThisState = function() {
+
+    // Leaving kibitz state resets are highlights on pelitLista
+    $(liveviewer).trigger('kibitzEnded');
+  }
+}
+
+liveviewer.States.CreationState = function() {
+
+  var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+
+  this.stateVars = {
+    gamePosition: START
+  };
+
+  this.name = 'creation';
+  this.goTos = ['setupPosition', 'lobby'];
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+  this.getPosition = function() {
+
+    if (this.stateVars.gamePosition) {
+      return this.stateVars.gamePosition;
+    }
+
+    return START;
+  }
+
+  this.validateData = function(white, black) {
+
+    if (white.length > 3 && white.length < 64 && black.length > 3 && black.length < 64) {
+
+      return true;
+    }
+
+    $(liveviewer).trigger('creationFormInvalidData');
+    return false;
+  }
+
+  this.setPosition = function(position) {
+
+    if (!position) {
+      this.stateVars.gamePosition = START;
+    }
+    else {
+      this.stateVars.gamePosition = position;
+    }
+    $(liveviewer).trigger('creationFormUIUpdate', [this.stateVars.gamePosition]);
+  }
+
+  this.getParamsToPassAlong = function(state) {
+
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    if (params) {
+      console.log("CREATIONSTATE: Passed in params: " + params.gamePosition);
+    }
+    
+    if (params && params.hasOwnProperty('gamePosition')) {
+      if (params.gamePosition) {
+        this.stateVars.gamePosition = params.gamePosition;
+      }
+
+    }
+
+    $(liveviewer).trigger('creationFormUIUpdate', [this.stateVars.gamePosition]);
+
+  }
+  this.leavingThisState = function() {
+
+    $(liveviewer).trigger('emptyCreationForm');
+  }
+}
+
+liveviewer.States.SetupPositionState = function() {
+
+  var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+
+  this.stateVars = {
+    gamePosition: START,
+    toMove: 'w',
+    moveNumber: 0,
+    whiteCastle: '-',
+    blackCastle: '-'
+  };
+
+  this.name = 'setupPosition';
+  this.goTos = ['creation'];
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+  this.castleString = function() {
+
+    if (this.stateVars.whiteCastle === '-' && this.stateVars.blackCastle === '-') {
+      return '-';
+    }
+
+    var string = '';
+
+    if (this.stateVars.whiteCastle !== '-') {
+      string += this.stateVars.whiteCastle;
+    }
+    if (this.stateVars.blackCastle !== '-') {
+      string += this.stateVars.blackCastle;
+    }
+
+    return string === '' ? '-' : string;
+  }
+
+  this.getParamsToPassAlong = function(state) {
+
+    if (state.name === 'creation') {
+
+      return {
+        'gamePosition': this.stateVars.gamePosition + ' ' +  this.stateVars.toMove + ' ' + this.castleString() + ' - 0 ' + this.stateVars.moveNumber
+      };
+    }
+
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    return null;
+
+  }
+
+  this.setPosition = function(position) {
+
+    if (!position) {
+      position = START;
+    }
+
+    this.stateVars.gamePosition = position;
+
+    $(liveviewer).trigger('setSetupBoardPosition', [position]);
+    
+  }
+
+  // Obsolete
+  this.saveSetupBoardPosition = function(position) {
+    this.stateVars.gamePosition = position;
+  }
+
+  // Destructor
+  this.leavingThisState = function() {
+
+    $(liveviewer).trigger('emptySetupBoard');
+  }
+  
+
+}
+
+liveviewer.States.LogState = function() {
+
+
+  this.stateVars = {
+
+  };
+
+  this.name = 'log';
+  this.goTos = ['lobby'];
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+
+  this.getParamsToPassAlong = function(state) {
+
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    return null;
+
+  }
+
+  // Destructor
+  this.leavingThisState = function() {
+
+    return null;
+  }
+  
+
+}
+
+liveviewer.Constructors.ViewSwitcher = function($kibitzView, $lobbyView, $creationView, $setupPositionView, $logView) {
+
+  this.statesWithViews = ['kibitz', 'lobby', 'creation', 'setupPosition', 'log'];
+  this.views = [$kibitzView, $lobbyView, $creationView, $setupPositionView, $logView];
+
+  this.switchTo = function(to, from) {
+
+    console.log("VIEWSWITCHER: Switching to view: " + to.name);
+
+    var idx = this.statesWithViews.indexOf(to.name);
+
+    if (idx === -1) {
+      return false;
+    }
+
+    for (var i=0, l=this.statesWithViews.length; i < l; i++) {
+        this.views[i].hide();
+    }
+
+    this.views[idx].show();
+
+
+
+
+  }
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, to, from) {
+    this.switchTo(to, from);
+  }.bind(this));
+}
+
+liveviewer.Constructors.StateController = function() {
+
+  this.currentState;
+  this.states = {};
+
+  this.runningModNumber = 0;
+
+  this.resultWasSet = function(game) {
+
+    console.log("CONTROLLER: Result was set! Updating headers");
+
+    if (this.currentState.name === 'kibitz' && this.currentState.stateVars.currentGame === game.gameID) {
+
+      $(liveviewer).trigger('updateBoardPosition', [game]);
+      $(liveviewer).trigger('updateGameViewHeaders', [game]);
+      this.stateChange(new liveviewer.States.TraversalState());
+    }
+
+  }
+
+  this.gameCreated = function(games) {
+
+    $(liveviewer).trigger('gameListUpdate', [games]);
+
+
+  }
+
+  this.receivedAllPositions = function(gameID, positions) {
+
+    if (this.currentState.name !== 'traversal' || this.currentState.stateVars.currentGame !== gameID) {
+      console.log("CONTROLLER: Positions discarded - user have moved on with his life");
+      console.log(this.currentState.name);
+      console.log(this.currentState.stateVars.currentGame + " === " + gameID + "?");
+      // User has moved elsewhere while positions were being downloaded.
+      return false;
+    }
+
+    console.log("CONTROLLER: Loading positions to traverser");
+
+    $(liveviewer).trigger('traversalPositionsConfirmed', [gameID, positions]);
+  }
+
+  this.setResultForCurrentGame = function(result) {
+
+    if (!this.isState('kibitz')) {
+      console.log("CONTROLLER: Setting result failed - wrong state");
+      return false;
+    }
+
+    var gameID = this.currentState.stateVars.currentGame;
+    liveviewer.netWork.send('setResultForGame', {gameID: gameID, result: result});
+
+  }
+
+  this.traversalRequestReceived = function() {
+
+    $(liveviewer).trigger('needAllPositionsForGame', [this.currentState.stateVars.currentGame]);
+  }
+
+  this.moveAccepted = function(resObj) {
+
+    if (this.currentState.name !== 'kibitz' || this.currentState.stateVars.currentGame !== resObj.gameID) {
+      // No need to update board
+      console.log(this.currentState);
+      console.log(this.currentState.stateVars.currentGame);
+      console.log(resObj.gameID);
+      console.log("CONTROLLER: Result object of successfull move discarded");
+      return;
+    }
+
+    $(liveviewer).trigger('updateBoardPosition', [resObj]);
+    
+
+  }
+
+  this.receivedGameData = function(game) {
+    console.log("CONTROLLER: Game data received");
+    console.log(game);
+
+    if (this.currentState.name === 'kibitz') {
+
+      if (game.result !== 0) {
+        // Game has ended, switch to traversal
+        this.currentState.stateVars.hasEnded = true;
+      }
+      else {
+        this.currentState.stateVars.hasEnded = false;
+      }
+
+      $(liveviewer).trigger('internalStateChange', [this.currentState]);
+      $(liveviewer).trigger('updateBoardPosition', [game]);
+      $(liveviewer).trigger('updateGameViewHeaders', [game]);
+      $(liveviewer).trigger('updateSelectedGame', [game.gameID]);
+    }
+  }
+
+  this.kibitzGame = function(gameID) {
+
+    if (this.currentState.name === 'kibitz' || this.stateChange(new liveviewer.States.KibitzState())) {
+      this.currentState.stateVars.currentGame = gameID;
+      $(liveviewer).trigger('loadingGame');
+      $(liveviewer).trigger('fetchGameDataForKibitz', [gameID]);
+
+    }
+  }
+
+  this.initialStateObsolete = function(stateName) {
+
+    if (this.states.hasOwnProperty(stateName)) {
+      this.currentState = this.states[stateName];
+      console.log("STATECONTROLLER: Initial state set: " + stateName);
+    }
+
+
+  }
+
+  this.addState = function(name, state) {
+
+    this.states[name] = state;
+  }
+
+  this.processMove = function(move) {
+
+    if (this.currentState.name !== 'kibitz') {
+      console.log("CLIENT: Move made on board was rejected - not in right state");
+      return false;
+    }
+
+    if (this.currentState.name === 'traversal' && !this.currentState.stateVars.overrideOn) {
+
+      // Can not send move, override is off
+      return false;
+
+    }
+
+    if (!this.currentState.stateVars.currentGame) {
+
+      console.log("CLIENT: Move rejected - no current game");
+      return false;
+    }
+
+    $(liveviewer).trigger('sendMoveToServer', [this.currentState.stateVars.currentGame, move]);
+
+  }
+
+  this.positionArrivalFromNet = function(positionObj) {
+
+    if (this.currentState.name !== 'kibitz') {
+      // Discard incoming position, we are not kibitzing anymore
+      console.log("CLIENT: Position update discarded - not kibitzing anymore");
+      return;
+    }
+
+    if (this.currentState.stateVars.currentGame !== positionObj.gameID) {
+      // Not the right game anymore
+      console.log("CLIENT: Position update discarded - user has changed the game");
+      return;
+    }
+
+    $(liveviewer).trigger('updateBoardPosition', [positionObj]);
+  }
+
+  this.isState = function(stateName) {
+
+    return this.currentState.name === stateName;
+  }
+
+  this.overridePosition = function() {
+
+    // Hard-code overrideOn to true for testing
+    this.currentState.stateVars.overrideOn = true;
+
+    if (!this.isState('traversal') || !this.currentState.stateVars.overrideOn) {
+      console.log("CONTROLLER: Overriding position failed");
+      return false;
+    }
+
+    var gameID = this.currentState.stateVars.currentGame;
+    var position = liveviewer.traverser.getCurrentPosition();
+    console.log("CONTROLLER: Informing network that we need to override from game: " + gameID);
+    liveviewer.netWork.send('positionOverride', {gameID: gameID, position: position});
+    this.stateChange(new liveviewer.States.KibitzState(gameID, false));
+
+
+  }
+
+  this.initialState = function(to) {
+    console.log("SETTING UP INITIAL STATE");
+    console.log(to);
+
+    this.currentState = to;
+    $(liveviewer).trigger('stateChangeConfirmed', [to]);
+  }
+
+  this.stateChange = function(to, suppressParams) {
+
+    console.log("CONTROLLER: Trying to change state");
+    console.log(to);
+    console.log(this.currentState);
+
+    if (this.currentState.name === to.name) {
+      console.log("CONTROLLER: Already in wanted state - state change rejected");
+      return false;
+    }
+
+    // State change only if state exists and there is transformation from the current state!
+    if (this.currentState.canGoTo(to)) {
+      console.log("PASSING PARAMS FROM STATE TO STATE");
+      if (!suppressParams) {
+        var passedIn = this.currentState.getParamsToPassAlong(to);
+        console.log(passedIn);
+        to.passParamsFromPrevious(passedIn);
+      }
+
+      console.log("CHANGING CURRENT STATE FOR GOOD");
+      console.log(to);
+
+      var from = this.currentState;
+      // Inform to-be-leaved state that it must do all mopping now or never
+      if (from) {
+        from.leavingThisState();
+      }
+
+      this.currentState = to;
+      $(liveviewer).trigger('stateChangeConfirmed', [to, from]);
+      return true;
+    }
+
+    console.log("CLIENT: State change rejected");
+    return false;
+  }
+
+  $(liveviewer).on('submitGameClicked', function(e, white, black) {
+    alert(white + " | " + black);
+    if (this.isState('creation')) {
+      if (this.currentState.validateData(white, black)) {
+        console.log("Validation success");
+        alert(this.currentState.getPosition());
+        liveviewer.netWork.submitNewGame(liveviewer.tournamentID, white, black, this.currentState.getPosition());
+        this.stateChange(new liveviewer.States.LobbyState());
+      }
+
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('cancelCreationClicked', function() {
+
+
+
+    if (this.isState('creation')) {
+      this.stateChange(new liveviewer.States.LobbyState());
+    }
+
+
+  }.bind(this));
+
+  
+
+  $(liveviewer).on('setupBoardPositionUpdated', function(e, fen) {
+
+    if (this.isState('setupPosition')) {
+      console.log("COTNROLLER: Setup board position changed: " + fen);
+      this.currentState.stateVars.gamePosition = fen;
+    }
+    
+  }.bind(this));
+
+  $(liveviewer).on('submitSetupClicked', function(e, moveNumber, toMove, whiteCastle, blackCastle) {
+
+    if (this.isState('setupPosition')) {
+      this.currentState.stateVars.moveNumber = moveNumber;
+      this.currentState.stateVars.toMove = toMove;
+      this.currentState.stateVars.whiteCastle = whiteCastle;
+      this.currentState.stateVars.blackCastle = blackCastle;
+      this.stateChange(new liveviewer.States.CreationState());
+    }
+
+
+  }.bind(this));
+
+  $(liveviewer).on('creationFormUIUpdate', function(e, position) {
+    // Nothing at this moment
+  }.bind(this));
+
+  $(liveviewer).on('showLogClicked', function() {
+    if (this.isState('lobby')) {
+      this.stateChange(new liveviewer.States.LogState());
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('backToLobbyClicked', function() {
+
+    if (this.isState('log')) {
+      this.stateChange(new liveviewer.States.LobbyState());
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('resultClicked', function(e, result) {
+    console.log("CONTROLLER: Result is set: " + result);
+    this.setResultForCurrentGame(result);
+  }.bind(this));
+
+  $(liveviewer).on('initialPositionClicked', function(e) {
+    if (this.isState('creation')) {
+      this.currentState.setPosition();
+
+    };
+
+  }.bind(this));  
+
+  $(liveviewer).on('initialSetupClicked', function(e) {
+    if (this.isState('setupPosition')) {
+      this.currentState.setPosition();
+    }
+  }.bind(this));
+
+  $(liveviewer).on('cancelSetupClicked', function(e) {
+
+    if (this.isState('setupPosition')) {
+      this.stateChange(new liveviewer.States.CreationState(), true);
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('toLobbyClicked', function() {
+    this.stateChange(new liveviewer.States.LobbyState());
+  }.bind(this));
+
+  $(liveviewer).on('customPositionClicked', function(e) {
+    this.stateChange(new liveviewer.States.SetupPositionState());
+
+  }.bind(this));
+
+  $(liveviewer).on('luoPeliClicked', function(e) {
+    this.stateChange(new liveviewer.States.CreationState());
+  }.bind(this));
+
+  $(liveviewer).on('moveHasBeenMade', function(e, move) {
+    this.processMove(move);
+  }.bind(this));
+
+  $(liveviewer).on('positionUpdateArrived', function(e, positionObj) {
+    this.positionArrivalFromNet(positionObj);
+  }.bind(this));
+
+  $(liveviewer).on('gameSelectedFromGameList', function(e, gameID) {
+    this.kibitzGame(gameID);
+  }.bind(this));
+
+  $(liveviewer).on('traversalClicked', function(e) {
+    if (this.currentState.name === 'traversal' || this.stateChange(new liveviewer.States.TraversalState())) {
+      this.traversalRequestReceived();
+    }
+  }.bind(this)); 
+
+  $(liveviewer).on('loppuunClicked', function(e) {
+    if (!this.isState('traversal')) {
+      return false;
+    }
+    $(liveviewer).trigger('traverseEnd');
+  }.bind(this));
+
+  $(liveviewer).on('alkuunClicked', function(e) {
+    if (!this.isState('traversal')) {
+      return false;
+    }
+    $(liveviewer).trigger('traverseStart');
+  }.bind(this));  
+
+  $(liveviewer).on('liveClicked', function(e) {
+    if (!this.isState('traversal')) {
+      return false;
+    }
+    $(liveviewer).trigger('gameSelectedFromGameList', [this.currentState.stateVars.currentGame]);
+  }.bind(this));  
+
+  $(liveviewer).on('taakseClicked', function(e) {
+    if (!this.isState('traversal')) {
+      return false;
+    }
+    $(liveviewer).trigger('traverseBack');
+  }.bind(this));
+
+  $(liveviewer).on('eteenClicked', function(e) {
+    if (!this.isState('traversal')) {
+      return false;
+    }
+    $(liveviewer).trigger('traverseForward');
+  }.bind(this));
+
+  $(liveviewer).on('palaaClicked', function(e) {
+    this.overridePosition();
+  }.bind(this));   
+
+  this.initialState(new liveviewer.States.KibitzState());   
+}
+
+liveviewer.Constructors.Traverser = function() {
+
+  this.positions = [];
+  this.currPosition = 0;
+
+  this.getCurrentPosition = function() {
+
+    return this.positions[this.currPosition];
+  }
+
+  this.reset = function() {
+
+
+  }
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, state) {
+
+    if (state.name === 'traversal') {
+      this.reset();
+    }
+  }.bind(this));
+
+  $(liveviewer).on('traversalPositionsConfirmed', function(e, gameID, positions) {
+
+    console.log("TRAVERSER: Positions have arrived: ");
+    console.log(positions);
+    this.positions = positions;
+    this.currPosition = positions.length-1;
+  }.bind(this));
+
+  $(liveviewer).on('traverseEnd', function() {
+    this.currPosition = this.positions.length-1;
+    console.log("TRAVERSER: Sending board update right away to board: " + this.positions[this.currPosition]);
+    $(liveviewer).trigger('updateBoardPosition', [this.positions[this.currPosition]]);
+  }.bind(this));
+
+  $(liveviewer).on('traverseStart', function() {
+    this.currPosition = 0;
+    console.log("TRAVERSER: Sending board update right away to board: " + this.positions[this.currPosition]);
+    $(liveviewer).trigger('updateBoardPosition', [this.positions[this.currPosition]]);
+  }.bind(this));
+
+  $(liveviewer).on('traverseForward', function() {
+    this.currPosition++;
+    if (this.currPosition >= this.positions.length) {
+      this.currPosition = this.positions.length-1;
+    }
+    $(liveviewer).trigger('updateBoardPosition', [this.positions[this.currPosition]]);
+  }.bind(this)); 
+
+  $(liveviewer).on('traverseBack', function() {
+    this.currPosition--;
+    if (this.currPosition < 0) {
+      this.currPosition = 0;
+    }
+    $(liveviewer).trigger('updateBoardPosition', [this.positions[this.currPosition]]);
+  }.bind(this));  
+}
+
+liveviewer.Constructors.GameHeaders = function($el) {
+
+  this.$el = $el;
+
+  this.whiteName = $el.find('#whiteName');
+  this.blackName = $el.find('#blackName');
+  this.result    = $el.find('#result');
+
+  this.updateHeaders = function(game) {
+
+    this.whiteName.empty().append(game.white);
+    this.blackName.empty().append(game.black);
+    this.result.empty().append(game.result);
+  }
+
+  $(liveviewer).on('updateGameViewHeaders', function(e, game) {
+    console.log("GAME HEADERS: Updating headers");
+    this.updateHeaders(game);
+  }.bind(this));
+} 
+
+
+liveviewer.Constructors.BoardWrapper = function($el, chessBoardInstance) {
+
+  this.fromSq;
+  this.chessBoardInstance = chessBoardInstance;
+  this.$el = $el;
+
+  this.moveResolver = new liveviewer.Constructors.MoveResolver();
+
+  this.showBoard = function() {
+
+    this.$el.show();
+  }
+
+  this.updatePosition = function(fen) {
+    console.log("BOARD: Updating position: " + fen);
+    this.chessBoardInstance.position(fen, false);
+
+  }
+
+  this.updateHighLights = function(move) {
+
+    if (!move) {
+      return false;
+    }
+
+    this.$el.find('div.square-55d63').removeClass('squareLid');
+    this.$el.find('.square-' + move.from).addClass('squareLid');
+    this.$el.find('.square-' + move.to).addClass('squareLid');
+  }
+
+  this.addPreMoveLight = function(sq1, sq2) {
+
+    // Remove old ones first
+    this.removePreMoveLights();
+    this.$el.find('.square-' + sq1).addClass('preMove');
+    this.$el.find('.square-' + sq2).addClass('preMove');
+  }
+
+  this.removePreMoveLights = function() {
+
+    this.$el.find('div.square-55d63').removeClass('preMove');
+  }
+
+  this.highLightFromSquare = function(sq) {
+
+    this.$el.find('.square-' + sq).addClass('squareClicked');
+    this.fromSq = sq;
+  }
+
+  this.unhighlightFromSquare = function() {
+
+    if (this.fromSq) {
+
+      this.$el.find('.square-' + this.fromSq).removeClass('squareClicked');
+    }
+
+
+  }
+
+  this.flipBoard = function() {
+
+    this.chessBoardInstance.flip();
+    $(shakkiserveri).trigger('boardOrientationUpdated', [this.chessBoardInstance.orientation()]);
+
+  }
+
+  this.setSide = function(color) {
+
+    if (color === 'white') {
+      console.log("BOARD_MOD: Player gets white");
+      this.chessBoardInstance.orientation('white');
+
+    }
+    else if (color === 'black') {
+      console.log("BOARD_MOD: Player gets black");
+      this.chessBoardInstance.orientation('black');
+    }
+    else {
+
+      this.chessBoardInstance.orientation('white');
+
+    }
+
+    $(liveviewer).trigger('boardOrientationUpdated', [this.chessBoardInstance.orientation()]);
+
+    
+  }
+
+  this.prepareBoardForGame = function(color) {
+
+    console.log("BOARD_MOD: Preparing board for new game...");
+
+    this.chessBoardInstance.start();
+    this.setSide(color);
+  }
+
+    $(liveviewer).on('updateBoardPosition.boardMod', function(e, posObj) {
+
+      this.updatePosition(posObj.pos);
+      //this.updateHighLights(info.move);
+      this.removePreMoveLights();
+    }.bind(this));
+
+    $(liveviewer).on('matchStarts.boardMod', function(e, color) {
+
+      //prepareBoardForGame(color);
+    }.bind(this)); 
+
+    $(liveviewer).on('gameStarts.boardMod', function(e, info) {
+
+      this.prepareBoardForGame(info.yourColor);
+
+    }.bind(this)); 
+
+    $(liveviewer).on('newOwnGame.boardMod', function(e, info) {
+
+      this.prepareBoardForGame(info.yourColor);
+    }.bind(this)); 
+
+    $(liveviewer).on('rotateBoard.boardMod', this.flipBoard.bind(this));
+
+    $(liveviewer).on('clickAcceptedAsFromSquare', function(e, sq) {
+
+      this.highLightFromSquare(sq);
+
+    }.bind(this));
+
+    $(liveviewer).on('fromSquareRemoved', this.unhighlightFromSquare.bind(this));
+
+    this.$el.on('click', function(e) {
+
+      var $target = $(e.target);
+      var pieceColor = 0;
+
+      if ($target.is("img")) {
+
+        // There is a piece in way. Take parent which is square div.
+        pieceColor = $target.attr("data-piece")[0];
+        $target = $target.parent();
+      }
+
+      var sq = $target.attr("data-square");
+
+      $(liveviewer).trigger('squareClicked', [sq, pieceColor]);
+
+
+    }.bind(this));
+  
+
+
+}
+
+liveviewer.Constructors.MoveResolver = function() {
+
+  this.previousClick;
+  this.previousClickColor;
+
+
+  this.newClick = function(e, sq, pieceColor) {
+    console.log("MOVERES_MOD: Resolving if possible move");
+    // e is not needed.
+
+    if (!this.previousClick) {
+      if (pieceColor === 0) {
+        return true;
+      }
+      this.previousClick = sq;
+      this.previousClickColor = pieceColor;
+      $(liveviewer).trigger('clickAcceptedAsFromSquare', [sq]);
+      return true;
+    }
+
+    if (this.previousClick === sq) {
+      this.previousClick = 0;
+      $(liveviewer).trigger('fromSquareRemoved');
+      return true;
+    }
+
+    if (pieceColor === this.previousClickColor) {
+
+      this.previousClick = sq;
+      this.previousClickColor = pieceColor;
+      $(liveviewer).trigger('fromSquareRemoved');
+      $(liveviewer).trigger('clickAcceptedAsFromSquare', [sq]);
+      return true;
+
+    }
+
+    console.log("MOVERES_MOD: Possible move occurred. Broadcasting notification...");
+    // Make new move into socket.
+    //socket.emit('makeMove', {from: previousClick, to: sq});
+    $(liveviewer).trigger('fromSquareRemoved');
+    $(liveviewer).trigger('moveHasBeenMade', {from: this.previousClick, to: sq});
+    this.previousClick = 0;
+    
+
+
+  }
+
+  $(liveviewer).on('squareClicked.moveResolver', this.newClick.bind(this));
+
+};
+
+// For easier testing
+$(liveviewer).on('stateChangeConfirmed', function(e, to) {
+
+  console.log("STATE CHANGE CONFIRMED");
+
+  if (to.name === 'kibitz') {
+
+    $('body').css('background-color', '#72ffce');
+  }
+
+  else if (to.name === 'traversal') {
+
+    $('body').css('background-color', '#ff72ce');
+  }
+
+  else if (to.name === 'lobby') {
+
+    $('body').css('background-color', '#ffce72');
+  }
+
+  else if (to.name === 'creation') {
+
+    $('body').css('background-color', '#aa52cf');
+  }
+
+  else if (to.name === 'setupPosition') {
+
+    $('body').css('background-color', '#e8feff');
+  }
+
+  else if (to.name === 'log') {
+
+    $('body').css('background-color', '#33eeac');
+  }
+
+  
+
+});
+
+$(liveviewer).on('operationFailed', function() {
+
+  alert('Something went wrong');
+});
+
+  </script>
+
+  </body>
+
+
+  </html>
