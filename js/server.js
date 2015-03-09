@@ -9,7 +9,17 @@
     // Every method which changes game header data hits this counter
     // This way HTTP kibitzers can be informed when there is game data change
     // by simply comparing this counter value to their local copies of the counter.
-    this.modNumber = 500;
+    this.modNumber = 10000;
+
+    this.changeAdminKey = function(newAdminKey) {
+      var l = newAdminKey.length;
+      if (l > 0 && l < 32) {
+        this.adminKey = newAdminKey;
+        return {adminKey: newAdminKey};
+      }
+
+      return false;
+    }
 
     this.setResultForGame = function(gameID, result) {
 
@@ -72,6 +82,10 @@
 
     this.newGame = function(white, black, position) {
 
+      if (this.runningID > 20) {
+        return false;
+      }
+
       console.log("SERVERI: Aloitetaan pelin luonti");
       var key = this.id + "_" + this.runningID++;
       var game = new Game(key, white, black, position);
@@ -88,12 +102,7 @@
 
     }
 
-    this.makeMoveToGame = function(adminKey, gameID, move) {
-
-      if (this.adminKey !== adminKey) {
-        // Not admin
-        return false;
-      }
+    this.makeMoveToGame = function(gameID, move) {
 
       var game = this.games[gameID];
 
@@ -131,6 +140,7 @@
     this.positions = [];
 
     this.result = 0;
+    this.lastMove = 0;
 
     this.startedFromCustom = false;
 
@@ -140,7 +150,7 @@
       if (this.initialPosition) {
         this.startedFromCustom = true;
       }
-      alert('Init Game: ' + this.initialPosition);
+
       // ChessJS knows how to handle undefined initial position
       this.chessJS = new Chess(this.initialPosition);
       this.positions.push({move: 0, pos: this.chessJS.fen()});
@@ -186,7 +196,8 @@
       console.log("Positions After override: " + this.positions.length);
       console.log("Latest position: " + this.positions[this.positions.length-1].pos);
 
-      return this.getPosition();
+      return this.getInfoJSON();
+
 
 
     }
@@ -273,10 +284,15 @@
         return {error: 'Server was not able to commit a move to game: ' + this.gameID, reason: 'Game has already ended'};
       }
 
+      move.promotion = 'q';
+
       var moveObj = this.chessJS.move(move);
       if (moveObj) {
+        this.lastMove = moveObj.san;
         var resObj = {gameID: this.gameID, move: moveObj.san, pos: this.chessJS.fen()};
         this.positions.push(resObj);
+        console.log("Move result object below");
+        console.log(resObj);
         // Inform socket kibitzers
         return resObj;
       }
@@ -294,7 +310,8 @@
         'blackResult': this.getResultForPlayer('black'),
         'result': this.result,
         'gameID': this.gameID,
-        'pos'   : this.chessJS.fen()
+        'pos'   : this.chessJS.fen(),
+        'move'  : this.lastMove
       }
     }
 
@@ -324,6 +341,19 @@
 
     // ADMIN API
 
+    this.validateAdmin = function(tournamentID, adminKey) {
+
+      var tournament = this.tournaments[tournamentID];
+      console.log(tournament);
+      console.log(tournament.adminKey + " vs. " + adminKey);
+      if (tournament && tournament.adminKey === adminKey) {
+
+        return {result: true, adminKey: adminKey};
+      }
+      return {result: false, adminKey: 0};
+
+    }
+
     this.populateModUpdateIfNeeded = function(tournamentID, modNumber) {
 
       var tournament = this.tournaments[tournamentID];
@@ -347,22 +377,36 @@
       return false;
     }
 
+    this.tryToChangeAdminKey = function(tournamentID, newAdminKey) {
+
+      var tournament = this.tournaments[tournamentID];
+
+      if (!tournament) {
+        return false;
+      }
+      return tournament.changeAdminKey(newAdminKey);
+
+    }
+
     this.adminAPI = function(tag, msgObj) {
 
       var retObject;
+      console.log("INCOMING OBJ ADMIN API");
+      console.log(tag);
+      console.log(msgObj);
 
       // First lets test whether user has rights and that tournament exists
       if (!msgObj.adminKey || !this.testAdminKey(msgObj.tournamentID, msgObj.adminKey)) {
-        return {error: 'Server declined your request!', reason: 'Authorization failed and/or tournament does not exist'};
+        return {tag: 'requestDeclined', content: 'Authorization failed or tournament does not exist!'};
       }
 
-      console.log("SERVER: Received msg of type: " + tag + " | gameID: " + msgObj.gameID + " | Tournament ID: " + msgObj.tournamentID);
+      console.log("SERVER ADMIN API: Received msg of type: " + tag + " | gameID: " + msgObj.gameID + " | Tournament ID: " + msgObj.tournamentID);
 
 
       // Main dispatching starts here
       if (tag === 'positionOverride') {
 
-        return this.positionOverride(msgObj.gameID, msgObj.position);
+        retObject = {tag: 'positionOverrideResult', content: this.positionOverride(msgObj.gameID, msgObj.position)};
       }
       else if (tag === 'setResultForGame') {
 
@@ -381,9 +425,19 @@
         retObject = {tag: 'allPositionsFetch', content: this.getAllPositions(msgObj.gameID)};
       }
       else if (tag === 'submitNewGame') {
-
         retObject = {tag: 'newGameCreated', content: this.newGame(msgObj.tournamentID, msgObj.white, msgObj.black, msgObj.position)};
       }
+
+      else if (tag === 'newPossibleMove') {
+        retObject = {tag: 'newMoveResult', content: this.newPossibleMove(msgObj.gameID, msgObj.move)}; 
+      }
+
+      else if (tag === 'adminPasswordChange') {
+        retObject = {tag: 'adminPasswordChangeResult', content: this.tryToChangeAdminKey(msgObj.tournamentID, msgObj.password)};
+      }
+
+
+
       // Dispatching ends here
 
 
@@ -408,6 +462,39 @@
 
     this.API = function(tag, msgObj) {
 
+      var retObject;
+      console.log("INCOMING OBJ API");
+      console.log(tag);
+      console.log(msgObj);
+      console.log("SERVER API: Received msg of type: " + tag + " | gameID: " + msgObj.gameID + " | Tournament ID: " + msgObj.tournamentID);
+
+      if (tag === 'adminLoginAttempt') {
+        console.log("SERVER: Received login attempt");
+        console.log(msgObj);
+        retObject = {tag: 'adminLoginResult', content: this.validateAdmin(msgObj.tournamentID, msgObj.password)};
+      }
+      else if (tag === 'fetchGame') {
+
+        retObject = {tag: 'gameFetch', content: this.getGame(msgObj.gameID)};
+      }
+      else if (tag === 'fetchLatestPosition') {
+
+        retObject = {tag: 'latestPositionFetch', content: this.getLatestPosition(msgObj.gameID)};
+        console.log("SERVER: POSITION FETHC");
+        console.log(retObject);
+      }
+      else if (tag === 'fetchAllPositions') {
+
+        retObject = {tag: 'allPositionsFetch', content: this.getAllPositions(msgObj.gameID)};
+      }      
+      var modUpdate = this.populateModUpdateIfNeeded(msgObj.tournamentID, msgObj.modNumber);
+
+      // Glue modUpdate to return object
+
+      retObject.modUpdate = modUpdate;
+
+      // Send back to user
+      return retObject;
 
     }
 
@@ -442,7 +529,7 @@
 
       var game = this.getGameObject(gameID);
 
-      if (game) {
+      if (game && game.result === 0) {
         return game.overridePosition(position);
       }
 
@@ -526,7 +613,7 @@
 
     }
 
-    this.newPossibleMove = function(adminKey, gameID, move) {
+    this.newPossibleMove = function(gameID, move) {
 
       // move contains position where move was made.
 
@@ -536,7 +623,7 @@
       var tournament = this.tournaments[tournamentID];
 
       if (tournament) {
-        return tournament.makeMoveToGame(adminKey, gameID, move);
+        return tournament.makeMoveToGame(gameID, move);
       }
 
       return false;

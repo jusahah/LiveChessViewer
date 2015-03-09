@@ -10,6 +10,7 @@
     </style>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/chessboard-0.3.0.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="js/chessboard-0.3.0.min.js"></script>
     <script src="chess.js"></script>
@@ -17,132 +18,348 @@
   </head>
   <body>
 
-<div id="liveViewerApp"> 
-<div id="notificationsBar" class="innerPanel" style="position: absolute; top: 10px; left: 65px; width: 640px; height: 40px; font-size: 14px; color: white;">
-
-  
-</div> 
-
-<div id="ss_pelit" class="innerPanel" style="position: absolute; bottom:20px; left: 65px; width: 640px; height: 110px;">
-  <div id="selectGamesShow" class="panelTab all" style="position: absolute; top: 4px; left: -55px; width: 44px; height: 46px; border: 1px solid #BBB;">Show Running</div>
-  
-
-  <ul id="pelitUL" class="pelitLista2" data-joo="wee">
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntylä</span> <span class="whiteResultSpan">1/2</span><span class="blackResultSpan">1/2</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan"></span><span class="blackResultSpan"></span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntylä</span> <span class="whiteResultSpan">1/2</span><span class="blackResultSpan">1/2</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
-    <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan"></span><span class="blackResultSpan"></span></li>    
-  </ul>
+<!-- border: 1px solid #BBB; -->
+<div id="loadingElement" style="width: 100%; height: 30px;">
+  <div id="animArea" class="alert alert-dismissable alert-warning" style="text-align: left; font-size: 18px; width: 260px; margin: auto; margin-top: 160px;">Ladataan applikaatiota</div>
 </div>
-<div id="kibitzView" class="ss_view" style="display: none;">  
-  <div id="ss_peliHeaders" style="position: absolute; top: 0px; left: 0px; height: 100px; width: 400px; background-color: red;">
-    <div id="whiteName"></div>
-    <div id="blackName"></div>
-    <div id="result"></div>
+
+<div id="liveViewerApp"> 
+
+  <div id="fixedPortion" style="height: 590px; width: 100%; position: relative;">
+  <div id="logoText" style="position: absolute; width: 120px; height: 18px; top: 0px; right: 0px; background-color: #EA7D63; font-size: 14px; text-align: center; z-index: 50; color: #333;">LiveChessViewer</div>
+
+  <div id="tabBar"style="position: absolute; top: 0px; left: 0px; width: 65px; height: 100%; background-color: #32404E;  padding-left: 12px;">
+    <div id="netActivity" class="btn btn-default panelTab sideBarTab" style="margin-bottom: 10px; margin-top: 10px;"></div>
+    <div id="toLobby" class="btn btn-default panelTab sideBarTab" style="padding: 2px; padding-top: 6px;">Aula</div>
+    <div id="toLog" class="btn btn-default panelTab sideBarTab" style="padding: 2px; padding-top: 6px;">Loki</div>
+    <div id="toAdmin" class="btn btn-default panelTab sideBarTab" style="padding: 1px; padding-top: 6px;">Admin</div>
+    <div id="toGameCreation" class="btn btn-default panelTab sideBarTab" style="padding: 1px; padding-top: 0px; font-size: 20px;">+</div>
+  </div>
+  <div id="notificationsBar" class="innerPanel" style="position: absolute; top: 0px; left: 65px; width: 652px; height: 60px; font-size: 14px; color: black; background-color: white; border: 0;"> 
+  </div> 
+  <div id="kibitzView" class="ss_view" style="display: none;"> 
+  <div id="gameInfoBar" style="position: absolute; width: 60px; height: 390px; top: 64px; left: 50px;"> 
+    <div id="blackToMoveIndicator" class="upperMoveIndicator" style="display: none; position: absolute; right: 10px;">
+      <button class="btn" style="width: 32px; height: 32px; background-color: #32404E;">
+    </div>
+    <div id="whiteToMoveIndicator" class="lowerMoveIndicator" style="display: none; position: absolute; right: 10px; border: 1px solid #BBB;">
+      <button class="btn" style="width: 32px; height: 32px; background-color: white; ">
+    </div>  
+  </div>
+  <div class="panel panel-default upperGameHeader" id="ss_peliHeadersBlack" style="position: absolute; left: 115px; height: 40px; width: 395px; overflow: hidden; padding: 4px;">
+    <div class="panel-body">
+      <!-- <div id="ss_peliHeaders" class="innerPanel" style="position: absolute; top: 10px; left: 115px; height: 40px; width: 395px; background-color: #EEE;"> -->
+       
+        
+      <!-- </div> -->
+    </div>
   </div>
 
-      <div id="ss_lauta" class="gameLauta" style="display: none; position: absolute; top: 100px;"> </div>
 
+        <div id="ss_lauta" class="gameLauta" style="display: none; position: absolute; top: 60px; left: 115px;"> </div>
+        <div class="panel panel-default" id="ss_resultBox" style="position: absolute; width: 60px; height: 50px; top: 230px; left: 30px; background-color: white; font-size: 22px; text-align: center; padding-top: 8px;">
+          <div class="panel-body">
+            <!-- <div id="ss_peliHeaders" class="innerPanel" style="position: absolute; top: 10px; left: 115px; height: 40px; width: 395px; background-color: #EEE;"> -->
+              
+              *
+            <!-- </div> -->
+          </div>
+        </div>
+        <div class="panel panel-default" id="ss_lastMoveBox" style="position: absolute; width: 100px; height: 40px; top: 10px; right: 30px; background-color: white; font-size: 16px; text-align: center; padding-top: 8px; overflow: hidden;">
+
+              
+              Last move
+
+        </div>
+
+  <div class="panel panel-default lowerGameHeader" id="ss_peliHeadersWhite" style="position: absolute; left: 115px; height: 40px; width: 395px; overflow: hidden; padding: 4px;">
+    <div class="panel-body">
+      <!-- <div id="ss_peliHeaders" class="innerPanel" style="position: absolute; top: 10px; left: 115px; height: 40px; width: 395px; background-color: #EEE;"> -->
+        
+        
+      <!-- </div> -->
+    </div>
+  </div>
       
 
 
-  <div id="testiButtons" style="position: absolute; top: 500px; left: 0px; height: 40px; width: 400px;">
+    <div id="gameButtons" style="position: absolute; top: 60px; right: 30px; height: 460px; width: 100px;">
+      <button id="liveButton" class="gameButton btn btn-danger" style="position: absolute; top: 0px; right: 0px; z-index: 100;">Live</button>
+      <div id="liveButtons" style="position: absolute; display: none; top:40px; left: 0px: height: 140px; width: 100%;"> 
+      
+        <button id="traversalButton" class="gameButton btn btn-sm btn-primary">Siirtohistoria</button>       
+        <button id="flipBoardButton" class="gameButton btn btn-sm btn-primary">Käännä lauta</button>
+
+        <button id="openIrreversiblesButton" class="gameButton btn btn-sm btn-primary">Admin-toiminnot</button>
+
+      </div>
+      <div id="traverseButtons" style="position: absolute; display: none; top:40px; left: 0px: width: 100%px;">
+        <button id="alkuunButton" class="gameButton btn btn-primary">Alkuun</button>
+        <button id="taakseButton" class="gameButton btn btn-primary">Taakse</button>
+        <button id="eteenButton" class="gameButton btn btn-primary">Eteen</button>
+        <button id="loppuunButton" class="gameButton btn btn-primary">Loppuun</button>
+        <button id="palaaButton" class="gameButton btn btn-danger" style="font-size: 12px;">Palaa asemaan</button>
+      </div>      
+      <div id="adminButtons" style="position: absolute; display: none; bottom:60px; left: 0px: height: 140px; width: 100%;">
+        
+        <button id="whiteWinsButton" class="gameButton btn btn-danger">1-0</button>
+        <button id="drawButton" class="gameButton btn btn-danger">1/2-1/2</button>
+        <button id="blackWinsButton" class="gameButton btn btn-danger">0-1</button>
+        
+      </div>
+
+      <div id="irreversiblesBar" style="display: none;"> 
+
+
+      </div>
+    </div>
+
+  </div>
+
+  <div id="adminView" class="ss_view" style="display: none; padding: 20px;">
+    <div id="nonAdminSubView" style="display: none;">
+    <div class="alert alert-danger" role="alert">Olet kirjautunut katsojana!</div>
+      <div class="panel panel-default">
+        <div class="panel-heading">Kirjaudu adminina</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Salasana</label>
+            <input type="password" id="adminPasswordInput" class="form-control" placeholder="Salasana">
+          </div>
+          <button id="logInAsAdminButton" class="btn btn-primary">Kirjaudu</button>
+          </div>
+        </div> 
+      <div class="panel panel-default">
+        <div class="panel-heading">Liveseurannan reaaliaikaisuus</div>
+        <div class="panel-body">
+        <p class="panelInfoText">Voit määritellä aikamääreen, jonka välein sovellus käy kysymässä palvelimelta mahdollisia uusia siirtoja. Tiheä päivitysväli parantaa käyttökokemusta, mutta kasvattaa virrankulutusta ja nettiyhteyden kuormitusta. Mobiililaitteille suositellaan 10 - 30 sekuntia, pöytäkoneille 5 sekuntia. Oletusarvo on 10 sekuntia. Minimiarvo on 5 sekuntia.</p>  
+          <div class="form-group">
+            <label for="fetchInterval" id="fetchIntervalLabel">Nykyinen päivitysväli: </label>
+            <input type="number" id="fetchInterval" class="form-control" placeholder="Syötä uusi päivitysväli (sekunteina, min. 5)">
+          </div>
+          <button id="fetchIntervalButton" class="btn btn-primary">Vahvista uusi arvo</button>
+          </div>
+        </div>              
+    </div>
+    <div id="adminSubView" style="display: none;">
+      <div class="alert alert-success" role="alert">Olet kirjautunut admin-käyttäjänä!</div>
+      <div class="panel panel-default">
+        <div class="panel-heading panel-success">Lähtevien siirtojen jonotus</div>
+        <div class="panel-body">
+        <p class="panelInfoText">Jonotuksella pyritään vähentämään verkon kuormitusta ryhmittämällä lyhyen aikavälin sisällä tehtyjä siirtoja. Jonotus vähentää käytettävän
+        laitteen virrankulutusta.</p>  
+          <button id="submitJonotusOn" class="btn btn-primary">Jonotus päällä</button>  
+          <button id="submitJonotusOff" class="btn btn-primary">Jonotus pois</button>     
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading panel-success">Admin-salasana</div>
+        <div class="panel-body"> 
+          <div class="form-group">
+            <label for="exampleInputPassword1">Uusi salasana</label>
+            <input type="text" class="form-control" id="adminNewPasswordInput" placeholder="Uusi salasana">
+          </div>
+          <button id="submitNewPasswordButton" class="btn btn-primary">Vahvista uusi salasana</button>
+        </div>
+      </div>
+
+        </div> 
+        
+  </div>
+
+  <div id="logView" class="ss_view" style="display: none; padding: 20px;">
+
+    <ul class="logsList list-group" id="logUL">
+      
+    </ul>
+    <!-- <button id="backToLobbyButton">Back to Lobby</button> -->
+  </div>
+
+  <div id="lobbyView" class="ss_view" style="display: none; padding-left: 20px; padding-right: 20px;">
+<!-- 
+    <button id="luoPeli">Luo Peli</button>
+    <button id="showLogButton">Näytä logi</button> -->
+  </div>
+  <div id="creationView" class="ss_view" style="display: none; padding: 16px;">
+    <div id="creationForm">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">Pelaajien tiedot</div>
+      <div class="panel-body">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Valkean pelaajan nimi</label>
+          <input type="text" id="whiteInput" class="form-control" placeholder="Anna valkean nimi">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputPassword1">Mustan pelaajan nimi</label>
+          <input type="text" class="form-control" id="blackInput" placeholder="Anna mustan nimi">
+        </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Pelin asema seurannan alkaessa</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="exampleInputFile" class="sr-only">Asema</label>
+            <button id="initialPositionSelect" class="btn btn-default">Start Position</button>
+            <button id="customPositionSelect"  class="btn btn-default">Custom Position</button>
+            <p class="help-block" id="positionInfo"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="snapShotOnly"> Snapshot only (no broadcasting)
+        </label>
+      </div>
+
+      <button id="vahvistaPeli" class="btn btn-primary">Luo peli</button>
+    </div>
+
+<!--     <h3>Welcome to creation view</h3>
     
-    <button id="traversalButton">Traverse</button>
-    <button id="alkuunButton">Alkuun</button>
-    <button id="taakseButton">Taakse</button>
-    <button id="eteenButton">Eteen</button>
-    <button id="loppuunButton">Loppuun</button>
-    <button id="liveButton">Live</button>
-    <button id="palaaButton">Palaa</button>
-    <button id="toLobbyFromKibitzButton">Lobby</button>
-    <button id="openIrreversiblesButton">Admin-toiminnot</button>
-
-    <div id="irreversiblesBar" style="display: none;"> 
-      <button id="whiteWinsButton">1-0</button>
-      <button id="drawButton">1/2-1/2</button>
-      <button id="blackWinsButton">0-1</button>
-
+    <input type="text" id="whiteInput" placeholder="White player name">
+    <input type="text" id="blackInput" placeholder="Black player name">
+    <button id="initialPositionSelect">Start Position</button>
+    <button id="customPositionSelect">Custom Position</button>
+    <div id="currentPositionSelected">
+      <p id="positionInfo"></p>
     </div>
+    <h5>Only this position (no real time broadcasting)</h5>
+    <input type="checkbox" id="snapShotOnly">
+    <button id="vahvistaPeli">Submit Game</button>
+    <button id="cancelCreationButton">Cancel Creation</button> -->
   </div>
-</div>
+    
 
-<div id="logView" class="ss_view" style="display: none;">
-  <h3>Logi</h3>
-  <ul class="logsList" id="logUL"></ul>
-  <button id="backToLobbyButton">Back to Lobby</button>
-</div>
+  <div id="setupPositionView" class="ss_view" style="display: none;">
 
-<div id="lobbyView" class="ss_view" style="display: none;">
-  <h3>Welcome to lobby</h3>
-  <button id="luoPeli">Luo Peli</button>
-  <button id="showLogButton">Näytä logi</button>
-</div>
-<div id="creationView" class="ss_view" style="display: none;">
-  <h3>Welcome to creation view</h3>
-  <div id="creationForm">
-  <input type="text" id="whiteInput" placeholder="White player name">
-  <input type="text" id="blackInput" placeholder="Black player name">
-  <button id="initialPositionSelect">Start Position</button>
-  <button id="customPositionSelect">Custom Position</button>
-  <div id="currentPositionSelected">
-    <p id="positionInfo"></p>
+    <div id="setupBoardWrapper">
+      <div id="setupBoard" class="gameLautaSmaller" style="position: absolute; top: 20px;">
+      </div>
+      <div id="emptyNappula"></div>
+      <div id="valkeatNappulat" class="spare-pieces-7492f spare-pieces-bottom-ae20f" style="padding-left: 1px; left: 60px; top: 336px; position: absolute;">
+      <img id="wK-a8c6-252c-1181-93cb-93aa-cf9d-8cae-ddc3" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wK" alt="" src="img/chesspieces/wikipedia/wK.png">
+      <img id="wQ-537b-6b1b-765c-78b0-d2d5-c639-6d96-74ed" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wQ" alt="" src="img/chesspieces/wikipedia/wQ.png">
+      <img id="wR-964f-f468-114c-99ca-2182-c6e4-7c4b-0b6e" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wR" alt="" src="img/chesspieces/wikipedia/wR.png">
+      <img id="wB-91f0-87f4-ed5b-f687-2e27-7754-920a-a04d" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wB" alt="" src="img/chesspieces/wikipedia/wB.png">
+      <img id="wN-0394-99a7-1118-0e4d-53ed-201a-bb99-2691" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wN" alt="" src="img/chesspieces/wikipedia/wN.png">
+      <img id="wP-cc9b-023a-9299-9101-e529-495a-809f-bc69" class="piece-417db" style="width: 36px;height: 36px;" data-piece="wP" alt="" src="img/chesspieces/wikipedia/wP.png">
+      </div>
+      <div id="mustatNappulat" class="spare-pieces-7492f spare-pieces-top-4028b" style="padding-left: 1px; left: 60px; top: 376px; position: absolute;">
+      <img id="bK-e688-7bd4-39dd-5439-ec7d-59f1-74c3-14de" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bK" alt="" src="img/chesspieces/wikipedia/bK.png">
+      <img id="bQ-c5b4-e811-069a-d8c0-cfed-6c8b-34c0-eb5c" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bQ" alt="" src="img/chesspieces/wikipedia/bQ.png">
+      <img id="bR-086e-12bb-90a1-039d-b45d-1e8c-f44a-b6cc" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bR" alt="" src="img/chesspieces/wikipedia/bR.png">
+      <img id="bB-f5a5-ad9c-f980-ef9b-b3fa-c430-e5c8-c724" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bB" alt="" src="img/chesspieces/wikipedia/bB.png">
+      <img id="bN-6c39-547e-6bbc-b7e2-1dc2-8182-cc9c-feaf" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bN" alt="" src="img/chesspieces/wikipedia/bN.png">
+      <img id="bP-8c21-1739-ffa2-41b6-e873-a0cf-0a84-0abd" class="piece-417db" style="width: 36px;height: 36px;" data-piece="bP" alt="" src="img/chesspieces/wikipedia/bP.png">
+      </div>
+
+
+      <div id="setupPositionForm" style="position: absolute; top: 20px; right: 20px; width: 270px; height: 400px;">
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Fen-lisätiedot</div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Siirtonumero</label>
+            <input type="number" id="setupMoveNumber" class="form-control" placeholder="Seuraavan siirron järjestysnumero">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Siirtovuoro</label>
+            <select name="select" id="setupToMove">
+              <option value="w" selected>Valkea</option> 
+              <option value="b">Musta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Linnoitukset</label>
+            <select name="select" id="whiteCastle">
+              <option value="-" selected>Ei linnoituksia (valkea)</option> 
+              <option value="K">Kuningassivu (valkea)</option>
+              <option value="Q">Kuningatarsivu (valkea)</option>
+              <option value="KQ">Molemmat (valkea)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <select name="select" id="blackCastle">
+              <option value="-" selected>Ei linnoituksia (musta)</option> 
+              <option value="k">Kuningassivu (musta)</option>
+              <option value="q">Kuningatarsivu (musta)</option>
+              <option value="kq">Molemmat (musta)</option>
+            </select> 
+          </div>
+          <button id="submitSetupButton" class="btn btn-primary">Luo asema</button>
+          <button id="cancelSetupButton" class="btn btn-danger">Peruuta</button>
+          </div>
+
+        </div>
+
+
+        
+      </div>
+        <div class="panel panel-default" style="position: absolute; top: 365px; right: 20px; width: 270px; height: 66px;">
+          <div class="panel-body">
+            <button id="initialSetupButton" class="btn btn-default">Alkuasema</button>
+            <button id="emptySetupButton" class="btn btn-default">Tyhjennä</button>
+          </div>
+        </div>
+
+<!--       <button id="cancelSetupButton">Cancel setup</button>
+      <button id="submitSetupButton">Submit setup</button>
+      <button id="initialSetupButton">Initial Position</button>
+      <input type="text" id="setupMoveNumber">
+      <select name="select" id="setupToMove">
+        <option value="w" selected>White</option> 
+        <option value="b">Black</option>
+      </select>
+      <select name="select" id="whiteCastle">
+        <option value="-" selected>None</option> 
+        <option value="K">Kingside</option>
+        <option value="Q">Queenside</option>
+        <option value="KQ">Both</option>
+      </select>  
+      <select name="select" id="blackCastle">
+        <option value="-" selected>None</option> 
+        <option value="k">Kingside</option>
+        <option value="q">Queenside</option>
+        <option value="kq">Both</option>
+      </select>   -->     
+    </div>  
+    
   </div>
-  <h5>Only this position (no real time broadcasting)</h5>
-  <input type="checkbox" id="snapShotOnly">
-  <button id="vahvistaPeli">Submit Game</button>
-  <button id="cancelCreationButton">Cancel Creation</button>
   </div>
   
-</div>
-<div id="setupPositionView" class="ss_view" style="display: none;">
-  <h3>Welcome to setup position view</h3>
-  <div id="setupBoardWrapper">
-    <div id="setupBoard" class="gameLauta" style="position: absolute; top: 100px;">
-    </div>
-    <div id="valkeatNappulat" class="spare-pieces-7492f spare-pieces-bottom-ae20f" style="padding-left: 51px; left: 20px; top: 500px; position: absolute;">
-    <img id="wK-a8c6-252c-1181-93cb-93aa-cf9d-8cae-ddc3" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wK" alt="" src="img/chesspieces/wikipedia/wK.png">
-    <img id="wQ-537b-6b1b-765c-78b0-d2d5-c639-6d96-74ed" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wQ" alt="" src="img/chesspieces/wikipedia/wQ.png">
-    <img id="wR-964f-f468-114c-99ca-2182-c6e4-7c4b-0b6e" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wR" alt="" src="img/chesspieces/wikipedia/wR.png">
-    <img id="wB-91f0-87f4-ed5b-f687-2e27-7754-920a-a04d" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wB" alt="" src="img/chesspieces/wikipedia/wB.png">
-    <img id="wN-0394-99a7-1118-0e4d-53ed-201a-bb99-2691" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wN" alt="" src="img/chesspieces/wikipedia/wN.png">
-    <img id="wP-cc9b-023a-9299-9101-e529-495a-809f-bc69" class="piece-417db" style="width: 49px;height: 49px;" data-piece="wP" alt="" src="img/chesspieces/wikipedia/wP.png">
-    </div>
-    <div id="mustatNappulat" class="spare-pieces-7492f spare-pieces-top-4028b" style="padding-left: 51px; left: 20px; top: 50px; position: absolute;">
-    <img id="bK-e688-7bd4-39dd-5439-ec7d-59f1-74c3-14de" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bK" alt="" src="img/chesspieces/wikipedia/bK.png">
-    <img id="bQ-c5b4-e811-069a-d8c0-cfed-6c8b-34c0-eb5c" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bQ" alt="" src="img/chesspieces/wikipedia/bQ.png">
-    <img id="bR-086e-12bb-90a1-039d-b45d-1e8c-f44a-b6cc" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bR" alt="" src="img/chesspieces/wikipedia/bR.png">
-    <img id="bB-f5a5-ad9c-f980-ef9b-b3fa-c430-e5c8-c724" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bB" alt="" src="img/chesspieces/wikipedia/bB.png">
-    <img id="bN-6c39-547e-6bbc-b7e2-1dc2-8182-cc9c-feaf" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bN" alt="" src="img/chesspieces/wikipedia/bN.png">
-    <img id="bP-8c21-1739-ffa2-41b6-e873-a0cf-0a84-0abd" class="piece-417db" style="width: 49px;height: 49px;" data-piece="bP" alt="" src="img/chesspieces/wikipedia/bP.png">
-    </div>
-    <button id="cancelSetupButton">Cancel setup</button>
-    <button id="submitSetupButton">Submit setup</button>
-    <button id="initialSetupButton">Initial Position</button>
-    <input type="text" id="setupMoveNumber">
-    <select name="select" id="setupToMove">
-      <option value="w" selected>White</option> 
-      <option value="b">Black</option>
-    </select>
-    <select name="select" id="whiteCastle">
-      <option value="-" selected>None</option> 
-      <option value="K">Kingside</option>
-      <option value="Q">Queenside</option>
-      <option value="KQ">Both</option>
-    </select>  
-    <select name="select" id="blackCastle">
-      <option value="-" selected>None</option> 
-      <option value="k">Kingside</option>
-      <option value="q">Queenside</option>
-      <option value="kq">Both</option>
-    </select>       
-  </div>  
+<div id="ss_pelit" class="innerPanel" style="width: 640px; min-height: 60px; max-height: 214px; position: relative; margin-left: 65px; margin-top: 10px; margin-bottom: 10px; ">
+  <div id="selectGamesShow" class="panelTab all btn btn-primary" style="position: absolute; top: 4px; left: -55px; width: 44px; height: 46px; text-align: center; padding: 3px; padding-top: 8px;">Kaikki</div>
   
+
+  <ul id="pelitUL" class="pelitLista2" data-joo="wee">
+      <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntylä</span> <span class="whiteResultSpan">1/2</span><span class="blackResultSpan">1/2</span></li>
+      <li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+<li><span class="whitePlayerSpan">Jaakkola </span> <span class="blackPlayerSpan">Mäntyniemi</span> <span class="whiteResultSpan">1</span><span class="blackResultSpan">0</span></li>
+
+    </ul>
 </div>
+
 </div>
   <script>
 
@@ -167,14 +384,21 @@
 
 
 
+// App Namespace
+var liveviewer = {};
+liveviewer.startJSEval = Date.now();
 
 
 
 
 
+  var TestNetWork = function(controller, blinkerEL) {
 
+    this.blinker = blinkerEL;
+    this.blinker.addClass('blinkerOff');
 
-  var TestNetWork = function(controller) {
+    this.blinkerOn = false;
+
     console.log("CREATING TestNetWork");
     console.log(controller);
 
@@ -183,7 +407,12 @@
 
     this.server = new TestServer();
 
+    this.queueOn = false;
+
     this.dispatchReturnObject = function(resObj) {
+
+      console.log("NETWORK: Received return object");
+      console.log(resObj);
 
       if (resObj.modUpdate) {
         console.log("NETWORK: Mod update confirmed");
@@ -201,8 +430,22 @@
       var tag = resObj.tag;
 
       if (tag === 'ajaxFail') {
+        $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Could not reach server - check internet connection and try again'}]);
         $(liveviewer).trigger('operationFailed', [resObj]);
       }
+
+      else if (tag === 'requestDeclined') {
+        $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Server declined your request: ' + resObj.content}]);
+      }
+
+      else if (tag === 'newMoveResult') {
+        this.controller.moveAccepted(resObj);
+      }
+
+      else if (tag === 'positionOverrideResult') {
+        this.controller.positionOverrideReceived(resObj);
+      }
+
       else if (tag === 'resultSet') {
         console.log("NETWORK: Received result set confirmation");
         console.log(resObj.content);
@@ -234,27 +477,86 @@
         this.controller.gameCreated(resObj.content);
       }
 
+      else if (tag === 'adminLoginResult') {
+        console.log("NETWORK: Received admin log-in result msg");
+        console.log(resObj.content);
+        this.controller.adminLogInResult(resObj.content);
+      }
+
+      else if (tag === 'adminPasswordChangeResult') {
+        console.log("NETWORK: Received admin key change result");
+        console.log(resObj);
+        this.controller.adminPasswordChangeResult(resObj.content);
+      }
+
+
 
     }
 
-    this.send = function(tag, msgObj) {
+    this.toggleBlinker = function(curr) {
+      if (curr % 2 === 0) {
+        this.blinker.removeClass('blinkerOn blinkerError blinkerOff').addClass('blinkerOn');
+      }
+      else {
+        this.blinker.removeClass('blinkerOn blinkerError blinkerOff').addClass('blinkerOff');
+      }
+      
+      
+    }
+
+    this.ensureBlinkerOff = function() {
+      this.blinker.removeClass('blinkerOn blinkerError blinkerOff').addClass('blinkerOff');
+    }
+
+    this.blink = function() {
+
+
+
+      if (this.blinkerOn) {
+        return;
+      }
+
+      console.log("BLINKER");
+      console.log(this.blinker);
+      this.blinker.removeClass('blinkerError blinkerOff').addClass('blinkerOn');
+      console.log(this.blinker);
+
+      var nums = 2;
+      var curr = 0;
+
+      var handle = setInterval(function() {
+        if (curr > nums) {
+          clearInterval(handle);
+          this.ensureBlinkerOff(curr);
+          handle = null;
+          return false;
+        }
+        curr++;
+        this.toggleBlinker(curr);
+      }.bind(this), 350);
+    }
+
+    this.send = function(tag, msgObj, admin) {
 
       msgObj.modNumber = this.controller.runningModNumber;
       msgObj.adminKey = this.adminKey;
       msgObj.tournamentID = liveviewer.tournamentID;
-
+      this.blink();
       setTimeout(function() {
         console.log("NETWORK: Sending msg to server");
-        var resObj = this.server.adminAPI(tag, msgObj);
-        return this.dispatchReturnObject(resObj);
-        if (resObj) {
-          console.log("NETWORK: New position arrived successfully: " + resObj);
-          $(liveviewer).trigger('positionUpdateArrived', [resObj]);
+        var resObj;
+        if (admin) {
+          resObj = this.server.adminAPI(tag, msgObj);
+        } else {
+          resObj = this.server.API(tag, msgObj);
         }
-      }.bind(this), 10);
+        
+        return this.dispatchReturnObject(resObj);
+
+      }.bind(this), 600);
+
+      // Show activity in blinker
       
-
-
     }
 
     this.submitNewGame = function(tournamentID, white, black, position) {
@@ -272,12 +574,12 @@
     }
 
     this.sendPossibleMove = function(gameID, move) {
-
+      this.blink();
       setTimeout(function() {
         console.log("NETWORK: Sending possible move to server: " + gameID + " | " + move);
         var resObj = this.server.newPossibleMove(this.adminKey, gameID, move);
         this.controller.moveAccepted(resObj);
-      }.bind(this),10);
+      }.bind(this),10000);
 
       console.log("TEST: Sending possible move to server | move:" + move + " , gameID: " + gameID);
     }
@@ -286,7 +588,7 @@
 
       console.log("TEST: Fetching latest position for game: " + gameID);
 
-      this.send('fetchLatestPosition', {gameID: gameID});
+      this.send('fetchLatestPosition', {gameID: gameID}, false);
 
 /*      var position = this.server.getLatestPosition(gameID);
       console.log(position);
@@ -304,7 +606,7 @@
       
       console.log("Tä");
       console.log(this);
-      this.send('fetchGame', {gameID: gameID});
+      this.send('fetchGame', {gameID: gameID}, false);
 /*      var game = this.server.getGame(gameID);
       this.controller.receivedGameData(game);*/
       
@@ -313,7 +615,7 @@
 
     this.fetchAllPositions = function(gameID) {
 
-      this.send('fetchAllPositions', {gameID: gameID});
+      this.send('fetchAllPositions', {gameID: gameID}, true);
 /*        var positions = this.server.getAllPositions(gameID);
         console.log("NETWORK: Positions have arrived to client");
         console.log(positions);
@@ -328,23 +630,21 @@
     }
 
     $(liveviewer).on('sendMoveToServer', function(e, gameID, move) {
-
       this.sendPossibleMove(gameID, move);
-
     }.bind(this));
 
     $(liveviewer).on('fetchGameDataForKibitz', function(e, gameID) {
-
       this.fetchGame(gameID);
-
     }.bind(this));  
 
     $(liveviewer).on('needAllPositionsForGame', function(e, gameID) {
-
       this.fetchAllPositions(gameID);
-
-
     }.bind(this));  
+
+    $(liveviewer).on('adminKeyHasBeenChanged', function(e, adminKey) {
+      this.adminKey = adminKey;
+      $(liveviewer).trigger('notification', {tag: 'success', content: 'Admin-salasana on vaihdettu. Käytä uutta salasanaa seuraavan kerran kirjautuessasi.'})
+    }.bind(this));
   }
 
   /// TESTERS END
@@ -355,24 +655,50 @@
 
 jQuery(document).ready(function() {
 
+  var c = liveviewer.Constructors;
+  var s = liveviewer.States;
+  // Must be defined already here as its used right-away
+  liveviewer.UI.loadingAnimator = new c.LoadingAnimator($('#loadingElement'), $('#liveViewerApp'));
+  $(liveviewer).trigger('loadingAnim');
+
+  setTimeout(function() {
+    $(liveviewer).trigger('adminConfirmed');
+    
+  }, 1500);
+  
+
+  // For testing
+  $('#logAdminIn').on('click', function() {
+
+    $(liveviewer).trigger('adminConfirmed');
+  }.bind(this));
+
   $('body').click(function(e) {
     console.log(e);
   })
 
-  var c = liveviewer.Constructors;
-  var s = liveviewer.States;
+  
+  
+
+  liveviewer.isAdmin = false;
 
   liveviewer.board = new c.BoardWrapper($('div#ss_lauta'), new ChessBoard('ss_lauta', 'start'));
   liveviewer.UI.pelitLista = new c.PelitLista($('#ss_pelit'));
-  liveviewer.UI.gameHeaders = new c.GameHeaders($('#ss_peliHeaders'));
-  liveviewer.UI.gameControls = new c.GameControls($('#testiButtons'));
+  liveviewer.UI.gameHeaders = new c.GameHeaders($('#ss_peliHeadersWhite'), $('#ss_peliHeadersBlack'), $('#ss_resultBox'), $('#ss_lastMoveBox'));
+  liveviewer.UI.gameControls = new c.GameControls($('#gameButtons'));
+  liveviewer.UI.gameInfoTabs = new c.GameInfoTabs($('#gameInfoBar'));
+
   liveviewer.UI.lobbyView = new c.LobbyView($('#lobbyView'));
   liveviewer.UI.logView = new c.LogView($('#logView'));
+  liveviewer.UI.adminView = new c.AdminView($('#adminView'));
   liveviewer.UI.creationForm = new c.CreationForm($('#creationForm'));
   liveviewer.UI.setupPositionBoard = new c.SetupBoardWrapper($('#setupBoardWrapper'), new ChessBoard('setupBoard', {draggable: false, appearSpeed: 1}));
+  liveviewer.UI.tabBar = new c.TabBar($('#tabBar'));
 
-  liveviewer.viewSwitcher = new c.ViewSwitcher($('#kibitzView'), $('#lobbyView'), $('#creationView'), $('#setupPositionView'), $('#logView'));
+  liveviewer.viewSwitcher = new c.ViewSwitcher($('#kibitzView'), $('#lobbyView'), $('#creationView'), $('#setupPositionView'), $('#logView'), $('#adminView'));
   liveviewer.notifications = new c.Notifications($('#notificationsBar'));
+
+  liveviewer.positionFetcher = new c.PositionFetcher();
 
   liveviewer.stateController = new c.StateController();
   liveviewer.stateController.addState('kibitz', new s.KibitzState());
@@ -384,14 +710,16 @@ jQuery(document).ready(function() {
   liveviewer.traverser = new c.Traverser();
   //liveviewer.board.prepareBoardForGame('black');
 
-  liveviewer.netWork = new TestNetWork(liveviewer.stateController);
+  liveviewer.netWork = new TestNetWork(liveviewer.stateController, $('#netActivity'));
 
   // Testiturnauksen luonti testausta varten
   var id = liveviewer.netWork.server.createTournament();
   liveviewer.tournamentID = id;
 
 
-
+  $(liveviewer).on('adminConfirmed',function() {
+    liveviewer.isAdmin = true;
+  });
   // Testitarkoitukseen
 /*  var runner = 1;
   var randomTag = ['danger', 'success', 'info', 'warning'];
@@ -410,17 +738,352 @@ jQuery(document).ready(function() {
 
   }, 14000);*/
 
+// App is now ready to use, but for speedy machines lets give little delay so that loading bar doesn't just flash. As flashing isn't nice, it hurts eyes
+if (liveviewer.startJSEval > (Date.now() - 500)) {
+  // Loading app to this point took less than 0.5 second
+  setTimeout(function() {
+    $(liveviewer).trigger('guestReady');
+  }, 500);  
+}
+else {
+  // For slower ones we start right away, still using setTimeout of course, as we are async fanboys
+   setTimeout(function() {
+    $(liveviewer).trigger('guestReady');
+  }, 0);   
+}
+
+var numID = 1;
+var testCreationHandle = setInterval(function() {
+  numID++;
+  liveviewer.netWork.send('submitNewGame', {white: 'Jaakkoi' + numID, black:  'Pena' + numID, position: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'}, true);
+}, 400);
+
+$(liveviewer).on('endTestCreation', function(){
+  clearInterval(testCreationHandle);
+});
+
+  
 
 });  
 
-// App Namespace
-var liveviewer = {};
+
+
 liveviewer.UI = {};
 liveviewer.States = {};
 liveviewer.tournamentID = 'sgh';
 
 // Constructors
 liveviewer.Constructors = {};
+
+liveviewer.Constructors.LoadingAnimator = function($animEl, $mainEl) {
+
+  this.$animEl = $animEl;
+  this.$mainEl = $mainEl;
+
+  this.animArea = $animEl.find('#animArea');
+
+  this.animHandle;
+
+  this.animStates = ['', '.', '..', '...'];
+  this.statesL = this.animStates.length;
+  this.curr = 0;
+
+
+  this.loopAnim = function() {
+
+    this.animHandle = setInterval(function() {
+      this.curr++;
+      if (this.curr >= this.statesL) {
+        this.curr = 0;
+      }
+
+      this.animArea.empty().append("Ladataan applikaatiota" + this.animStates[this.curr]);
+
+    }.bind(this), 300);
+
+  }
+
+  this.startAnim = function() {
+
+    this.$mainEl.hide();
+    this.$animEl.show();
+    this.loopAnim();
+
+  }
+
+  this.override = function() {
+
+    // Clean after oneself
+    this.startAnim = 0;
+    this.loopAnim = 0;
+    this.stopAnim = 0;
+    $(liveviewer).off('loadingAnim');
+  }
+
+  this.stopAnim = function() {
+
+    if (this.animHandle) {
+      clearInterval(this.animHandle);
+      this.animHandle = null;
+      this.$animEl.hide();
+      this.$mainEl.show();
+      this.override();
+    }
+  }
+
+  $(liveviewer).on('loadingAnim', this.startAnim.bind(this));
+  $(liveviewer).on('guestReady', this.stopAnim.bind(this));
+}
+
+liveviewer.Constructors.GameInfoTabs = function($gameInfoBar) {
+
+  this.$bar = $gameInfoBar;
+
+  this.whiteToMoveIndicator = $gameInfoBar.find('#whiteToMoveIndicator');
+  this.blackToMoveIndicator = $gameInfoBar.find('#blackToMoveIndicator');
+
+  this.updateIndicators = function(toMove) {
+
+    if (toMove === 'b') {
+      this.whiteToMoveIndicator.hide();
+      this.blackToMoveIndicator.show();
+    }
+
+    else if (toMove === 'w') {
+      this.blackToMoveIndicator.hide();
+      this.whiteToMoveIndicator.show();
+    }
+
+  }
+
+  this.indicatorsNormal = function() {
+
+    this.whiteToMoveIndicator.removeClass('upperMoveIndicator').addClass('lowerMoveIndicator');
+    this.blackToMoveIndicator.removeClass('lowerMoveIndicator').addClass('upperMoveIndicator');
+  }
+
+  this.indicatorsOpposite = function() {
+
+    this.blackToMoveIndicator.removeClass('upperMoveIndicator').addClass('lowerMoveIndicator');
+    this.whiteToMoveIndicator.removeClass('lowerMoveIndicator').addClass('upperMoveIndicator');
+  }  
+
+  this.resolveToMove = function(fen) {
+    return fen.split(" ")[1];
+  }
+
+  $(liveviewer).on('updateBoardPosition', function(e, posObj) {
+    var toMove = this.resolveToMove(posObj.pos);
+    this.updateIndicators(toMove);
+
+  }.bind(this));
+
+  $(liveviewer).on('boardOrientationUpdated', function(e, orientation) {
+
+    if (orientation === 'white') {
+      this.indicatorsNormal();
+    }
+    else if (orientation === 'black') {
+      this.indicatorsOpposite();
+    }
+  }.bind(this));
+}
+
+liveviewer.Constructors.PositionFetcher = function(interval) {
+
+  this.interval = interval || 10000;
+  this.fetchHandle;
+
+  this.beginAutoFetch = function() {
+
+    if (this.fetchHandle) {
+      return false;
+    }
+
+    this.fetchHandle = setInterval(function() {
+      $(liveviewer).trigger('positionFetchFromTimer');
+    }, this.interval);
+  }
+
+  this.stopAutoFetch = function() {
+
+    if (this.fetchHandle) {
+
+      clearInterval(this.fetchHandle);
+      this.fetchHandle = 0;
+    }
+  }
+
+  $(liveviewer).on('adminConfirmed', this.stopAutoFetch.bind(this));
+  $(liveviewer).on('guestReady', this.beginAutoFetch.bind(this));
+
+  $(liveviewer).on('fetchIntervalChanged', function(e, newInterval) {
+    
+    if (newInterval <= 4 || isNaN(newInterval)) {
+      $(liveviewer).trigger('notification', {tag: 'warning', content: 'Päivitysvälille annettu liian pieni arvo - anna luku, joka on vähintään 5!'});
+      return; 
+    }
+    this.stopAutoFetch();
+    this.interval = newInterval * 1000; // saved as milliseconds
+    this.beginAutoFetch();
+    $(liveviewer).trigger('notification', {tag: 'success', content: 'Päivitysväli päivitetty uuteen arvoon: ' + newInterval + " sekuntia"});
+    $(liveviewer).trigger('fetchIntervalChangedSuccess', [newInterval]);
+
+  }.bind(this));
+
+  $(liveviewer).on('guestReady', function() {
+
+    $(liveviewer).trigger('fetchIntervalChangedSuccess', [this.interval / 1000]);
+
+  }.bind(this));
+
+
+}
+
+liveviewer.Constructors.TabBar = function($el) {
+
+  this.$el = $el;
+
+  this.lobbyB = $el.find('#toLobby');
+  this.logB = $el.find('#toLog');
+  this.adminB = $el.find('#toAdmin');
+  this.creationB = $el.find('#toGameCreation');
+
+  this.currentlyLighted;
+
+  this.creationB.on('click', function() {
+    $(liveviewer).trigger('toCreationClicked');
+  });
+
+  this.lobbyB.on('click', function() {
+    $(liveviewer).trigger('toLobbyClicked');
+  });
+  this.logB.on('click', function() {
+
+    $(liveviewer).trigger('showLogClicked');
+  });
+  this.adminB.on('click', function() {
+    $(liveviewer).trigger('showAdminClicked');
+  });
+
+  $(liveviewer).on('adminConfirmed', function() {
+
+    this.logB.show();
+    this.creationB.show();
+  }.bind(this));
+
+  $(liveviewer).on('guestReady', function() {
+    this.lobbyB.show();
+    this.adminB.show();
+    this.logB.hide();
+    this.creationB.hide();
+
+  }.bind(this));
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, to) {
+
+    if (to.name === 'kibitz') {
+      if (this.currentlyLighted) {
+        this.currentlyLighted.removeClass('btn-primary').addClass('btn-default');  
+      }
+      this.currentlyLighted = 0;
+
+    }
+    else if (to.name === 'log') {
+      if (this.currentlyLighted) {
+        this.currentlyLighted.removeClass('btn-primary').addClass('btn-default');
+      }          
+      this.logB.addClass('btn-primary');
+      this.currentlyLighted = this.logB;
+    }
+
+    else if (to.name === 'adminSetup') {
+      if (this.currentlyLighted) {
+        this.currentlyLighted.removeClass('btn-primary').addClass('btn-default');
+      }   
+      this.adminB.addClass('btn-primary');
+      this.currentlyLighted = this.adminB;      
+    }
+    else if (to.name === 'lobby') {
+      if (this.currentlyLighted) {
+        this.currentlyLighted.removeClass('btn-primary').addClass('btn-default');
+      }    
+      this.lobbyB.addClass('btn-primary'); 
+      this.currentlyLighted = this.lobbyB;
+    }
+
+    else if (to.name === 'creation') {
+      if (this.currentlyLighted) {
+        this.currentlyLighted.removeClass('btn-primary').addClass('btn-default');
+      }     
+      this.creationB.addClass('btn-primary');  
+      this.currentlyLighted = this.creationB;     
+    }
+
+  }.bind(this));
+
+}
+
+liveviewer.Constructors.AdminView = function($el) {
+
+  this.$el = $el;
+  this.loggedInGuestSub = $el.find('#nonAdminSubView');
+  this.loggedInAdminSub = $el.find('#adminSubView');
+
+  this.fetchIntervalB = this.$el.find('#fetchIntervalButton');
+  this.fetchIntervalLabel = this.$el.find('#fetchIntervalLabel');
+  this.fetchIntervalInput = this.$el.find('#fetchInterval');
+
+  this.adminNewPasswordInput = this.$el.find('#adminNewPasswordInput');
+  this.adminNewPasswordB = this.$el.find('#submitNewPasswordButton');
+
+  // Ensure non-admin view is on
+  this.loggedInAdminSub.hide();
+  this.loggedInGuestSub.show();
+
+  this.selectedSubView = this.loggedInGuestSub;
+
+  this.salasanaInput = this.loggedInGuestSub.find('#adminPasswordInput');
+  this.adminB = this.loggedInGuestSub.find('#logInAsAdminButton');
+
+  this.adminB.on('click', function() {
+    var salkku = this.salasanaInput.val();
+    this.salasanaInput.val('');
+    $(liveviewer).trigger('adminLoginInitiated', [salkku]);
+  }.bind(this));
+
+  this.fetchIntervalB.on('click', function() {
+    var updateInterval = this.fetchIntervalInput.val();
+    this.fetchIntervalInput.val('');
+    $(liveviewer).trigger('fetchIntervalChanged', [updateInterval]);
+
+  }.bind(this));
+
+  this.adminNewPasswordB.on('click', function() {
+    var newSalkku = this.adminNewPasswordInput.val();
+    if (!newSalkku && newSalkku === '') {
+      $(liveviewer).trigger('notification', {tag: 'warning', content: 'Operation failed - admin password can not be empty'}, true);
+      return;
+    }
+    this.adminNewPasswordInput.val('');
+    $(liveviewer).trigger('adminPasswordChangeInitiated', [newSalkku]);
+
+  }.bind(this));
+
+  $(liveviewer).on('adminConfirmed', function() {
+    this.loggedInGuestSub.hide();
+    this.loggedInAdminSub.show();
+  }.bind(this));
+
+  $(liveviewer).on('fetchIntervalChangedSuccess', function(e, interval) {
+    this.fetchIntervalLabel.empty().append("Nykyinen päivitysväli: " + interval + " sekuntia");
+
+  }.bind(this));
+
+
+
+
+}
 
 liveviewer.Constructors.LobbyView = function($el) {
 
@@ -440,6 +1103,25 @@ liveviewer.Constructors.LobbyView = function($el) {
 
 liveviewer.Constructors.LogView = function($el) {
 
+  var testData = "<li class='danger list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='info list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='info list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='danger list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='warning list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='success list-group-item'>At 16:23 | Jotain tartteis tehrä</li>" +
+    "<li class='danger list-group-item'>At 16:23 | Jotain tartteis tehrä</li>";
+  
+
   this.$el = $el;
   this.logUL = $el.find('ul#logUL');
   this.backToLobbyB = $el.find('#backToLobbyButton');
@@ -457,8 +1139,9 @@ liveviewer.Constructors.LogView = function($el) {
       var date = new Date();
       date.setTime(log.time);
 
-      html += "<li class='" + log.msg.tag + "'>At " + date.getHours() + ":" + date.getMinutes() + " | " + log.msg.content + "</li>"; 
+      html += "<li class='" + log.msg.tag + " list-group-item'>At " + date.getHours() + ":" + date.getMinutes() + " | " + log.msg.content + "</li>"; 
     }
+    html += testData;
     this.logUL.append(html);
 
   }.bind(this));
@@ -474,17 +1157,36 @@ liveviewer.Constructors.Notifications = function($el) {
   this.screenQueue = [];
   this.screenFull;
 
+  this.currentIsVolatile;
 
-  this.newNotification = function(msg) {
+
+  this.newNotification = function(msg, isVolatile) {
 
     if (NOTIFICATION_TYPES.indexOf(msg.tag) === -1) {
       // Not supported notification
       return false;
     }
+    console.log("NEW NOT AGAIN");
+    console.log(msg);
+    console.log(isVolatile);
+
+    if (isVolatile) {
+      console.log("VOLATILE MSG");
+      if (!this.screenFull) {
+        // Push straigh away
+        this.showOnScreen(msg);
+      }
+      return;
+    }
+
+    console.log("NOTIFICATION RECE");
+    console.log(msg);
+
+
 
     this.notificationHistory.unshift({time: Date.now(), msg: msg});
 
-    if (this.screenQueue.length > 5) {
+    if (this.screenQueue.length > 3) {
       // Too much traffic on notification panel
       return true;
     }
@@ -507,18 +1209,26 @@ liveviewer.Constructors.Notifications = function($el) {
       this.screenFull = true;
       setTimeout(function() {
         this.screenFull = false;
+        this.removeFromScreen();
         this.checkQueue();
-      }.bind(this), 5000 / (l+1) + 1500);
+      }.bind(this), 5000 / (l+1) + 1000);
     }
   }
 
-  this.showOnScreen = function(msg) {
-    this.$el.empty().append(msg.tag.toUpperCase() + ": " + msg.content);
+  this.removeFromScreen = function() {
+    this.$el.empty();
   }
 
-  $(liveviewer).on('notification', function(e, msg) {
+  this.showOnScreen = function(msg) {
+    console.log("TO SCREEN:" + msg.tag);
+    var alertDiv = '<div class="alert alertCentered alert-' + msg.tag.toLowerCase() + '" role="alert" style="height: 60px; padding-top: 20px;">' + msg.content + '</div>';
+    this.$el.empty().append(alertDiv);
+  }
 
-    this.newNotification(msg);
+
+  $(liveviewer).on('notification', function(e, msg, isVolatile) {
+
+    this.newNotification(msg, isVolatile);
   }.bind(this));
 
   $(liveviewer).on('stateChangeConfirmed', function(e, to) {
@@ -526,6 +1236,10 @@ liveviewer.Constructors.Notifications = function($el) {
     if (to.name === 'log') {
       $(liveviewer).trigger('hereAreLogs', [this.notificationHistory.slice(0, 100)])
     }
+    if (!this.screenFull) {
+      //this.$el.empty();
+    }
+    
 
 
   }.bind(this));
@@ -544,16 +1258,28 @@ liveviewer.Constructors.SetupBoardWrapper = function($el, chessBoardInstance) {
   this.board = this.$el.find('#setupBoard');
   this.mustat = this.$el.find('#mustatNappulat');
   this.valkeat = this.$el.find('#valkeatNappulat');
+  this.emptyPiece = this.$el.find('#emptyNappula');
 
   this.submitB = this.$el.find('#submitSetupButton');
   this.cancelB = this.$el.find('#cancelSetupButton');
   this.initialB = this.$el.find('#initialSetupButton');
+  this.emptyB   = this.$el.find('#emptySetupButton');
 
   this.setupMoveNumber = this.$el.find('#setupMoveNumber');
   this.setupToMove = this.$el.find('#setupToMove');
 
   this.whiteCastle = this.$el.find('#whiteCastle');
   this.blackCastle = this.$el.find('#blackCastle');
+
+  this.selectEmptyPiece = function() {
+
+     if (this.selectedPieceEl) {
+      this.selectedPieceEl.removeClass('selectedPiece');
+    }   
+    this.selectedPieceEl = this.emptyPiece;
+    this.emptyPiece.addClass('selectedPiece');
+    this.selectedPiece = 0;
+  }
 
   this.selectPiece = function(pieceCode) {
 
@@ -578,7 +1304,18 @@ liveviewer.Constructors.SetupBoardWrapper = function($el, chessBoardInstance) {
   this.setPieceToSquare = function(sq) {
 
     var position = this.chessBoardInstance.position();
-    position[sq] = this.selectedPiece;
+
+    if (this.selectedPiece === 0) {
+      // Empty piece selected, remove if there is someone
+      if (!position.hasOwnProperty(sq)) {
+        return;
+      }
+      delete position[sq];
+    }
+    else {
+      position[sq] = this.selectedPiece;
+    }
+
     this.chessBoardInstance.position(position);
     console.log(position);
 
@@ -615,6 +1352,10 @@ liveviewer.Constructors.SetupBoardWrapper = function($el, chessBoardInstance) {
       this.setPieceToSquare($(e.target).attr('data-square'));
     }
 
+  }.bind(this));
+
+  this.emptyPiece.on('click', function(e) {
+    this.selectEmptyPiece();
   }.bind(this));
 
   this.mustat.on('click', function(e) {
@@ -656,6 +1397,10 @@ liveviewer.Constructors.SetupBoardWrapper = function($el, chessBoardInstance) {
     this.blackCastle.val('kq');
     $(liveviewer).trigger('initialSetupClicked');
   }.bind(this));
+
+  this.emptyB.on('click', function() {
+    $(liveviewer).trigger('emptySetupClicked');
+  });
 
 
 }
@@ -706,34 +1451,95 @@ liveviewer.Constructors.CreationForm = function($el) {
 liveviewer.Constructors.GameControls = function($el) {
 
   this.$el = $el;
-  this.traversalB = $el.find('#traversalButton');
-  this.alkuunB = $el.find('#alkuunButton');
-  this.liveB = $el.find('#liveButton');
-  this.taakseB = $el.find('#taakseButton');
-  this.eteenB = $el.find('#eteenButton');
-  this.palaaB = $el.find('#palaaButton');
-  this.loppuunB = $el.find('#loppuunButton');
-  this.toLobbyB = $el.find('#toLobbyFromKibitzButton');
 
-  this.openIrreversiblesB = $el.find('#openIrreversiblesButton');
+  this.liveB = this.$el.find('#liveButton');
+
+  this.liveButtons = $el.find('#liveButtons');
+  this.traverseButtons = $el.find('#traverseButtons');
+  this.adminButtons = $el.find('#adminButtons');
+
+  this.modesToButtonDivs = {
+    'traverse': this.traverseButtons,
+    'live': this.liveButtons,
+    'admin': this.adminButtons
+  }
+
+  this.traversalB = this.liveButtons.find('#traversalButton');
+  this.alkuunB = this.traverseButtons.find('#alkuunButton');
+  this.taakseB = this.traverseButtons.find('#taakseButton');
+  this.eteenB = this.traverseButtons.find('#eteenButton');
+  this.palaaB = this.traverseButtons.find('#palaaButton');
+  this.loppuunB = this.traverseButtons.find('#loppuunButton');
+  this.toLobbyB = this.liveButtons.find('#toLobbyFromKibitzButton');
+  this.flipB = this.liveButtons.find('#flipBoardButton');
+
+
+
+
+  this.openIrreversiblesB = this.liveButtons.find('#openIrreversiblesButton');
 
   this.irreversiblesBar = $el.find('#irreversiblesBar');
 
-  this.whiteWinsB = this.irreversiblesBar.find('#whiteWinsButton');
-  this.drawB = this.irreversiblesBar.find('#drawButton');
-  this.blackWinsB = this.irreversiblesBar.find('#blackWinsButton');
+  this.whiteWinsB = this.adminButtons.find('#whiteWinsButton');
+  this.drawB = this.adminButtons.find('#drawButton');
+  this.blackWinsB = this.adminButtons.find('#blackWinsButton');
+
+  // Make sure admin buttons are originally hidden
+  this.palaaB.hide();
+  this.openIrreversiblesB.hide();
+  this.irreversiblesBar.hide();
 
   this.irreversibleOpen = false;
+  this.adminOpen = false;
+
+  this.currentMode = 'live';
+
+  this.changeButtonsMode = function(newmode) {
+
+    if (this.modesToButtonDivs.hasOwnProperty(newmode)) {
+      this.liveButtons.hide();
+      this.traverseButtons.hide();
+      this.adminButtons.hide();
+      this.currentMode = newmode;
+      this.showCurrentBar();
+    }
+
+
+  }
+
+  this.showCurrentBar = function() {
+    this.modesToButtonDivs[this.currentMode].show();
+  }
+
+  this.toggleAdminBar = function() {
+
+    if (this.adminOpen) {
+      this.adminOpen = false;
+      this.adminButtons.hide();
+    }
+    else {
+      this.adminOpen = true;
+      this.adminButtons.show();
+    }
+  }
+
+  this.resetView = function() {
+    this.changeButtonsMode('live');
+    this.adminOpen = false;
+    this.irreversiblesBar.hide();
+   
+  }
 
   this.highLightLive = function() {
 
-    this.liveB.removeClass('offButton').addClass('onButton');
+    this.liveB.removeClass('btn-danger').addClass('btn-success');
   }
 
   this.dimLive = function() {
 
-    this.liveB.removeClass('onButton').addClass('offButton');
+    this.liveB.removeClass('btn-success').addClass('btn-danger');
   }
+
 
   $(liveviewer).on('internalStateChange', function(e, state) {
 
@@ -750,73 +1556,107 @@ liveviewer.Constructors.GameControls = function($el) {
 
   }.bind(this));
 
+  $(liveviewer).on('gameChanged', function() {
+    this.resetView();
+
+  }.bind(this));
+
   $(liveviewer).on('stateChangeConfirmed', function(e, state) {
 
     if (state.name === 'kibitz') {
+      this.currentMode = 'live';
+      this.showCurrentBar();
       this.highLightLive();
     }
-    else {
+    else if (state.name === 'traversal') {
+      this.currentMode = 'traverse';
+      this.showCurrentBar();
       this.dimLive();
     }
+
+    else {
+      // Moving away from board view
+      this.resetView();
+    }
+
+
 
 
   }.bind(this));
 
   this.openIrreversiblesB.on('click', function() {
-
-    if (this.irreversibleOpen) {
-      this.irreversiblesBar.hide();
-      this.irreversibleOpen = false;
-    }
-    else {
-      this.irreversiblesBar.show();
-      this.irreversibleOpen = true;      
-    }
     
+    this.toggleAdminBar();
+    
+  }.bind(this));
+
+  $(liveviewer).on('positionOverrideSuccess', function() {
+    this.changeButtonsMode('live');
+  }.bind(this));
+
+  $(liveviewer).on('adminConfirmed', function() {
+
+    this.palaaB.show();
+    this.openIrreversiblesB.show();
   }.bind(this));
 
   // Later, use only one listeners for all
   this.whiteWinsB.on('click', function() {
-    if (this.irreversibleOpen) {
+    
       $(liveviewer).trigger('resultClicked', ['w']);
-    } 
+     
   }.bind(this));
   this.drawB.on('click', function() {
-    if (this.irreversibleOpen) {
+  
       $(liveviewer).trigger('resultClicked', ['d']);
-    }
+    
   }.bind(this));
   this.blackWinsB.on('click', function() {
-    if (this.irreversibleOpen) {
+    
       $(liveviewer).trigger('resultClicked', ['b']);
-    }
+    
   }.bind(this));
 
-  this.toLobbyB.on('click', function() {
-    $(liveviewer).trigger('toLobbyClicked');
-  });
+  this.flipB.on('click', function() {
+    $(liveviewer).trigger('flipBoardClicked');   
+  }.bind(this));
   this.loppuunB.on('click', function() {
-    $(liveviewer).trigger('loppuunClicked');
-  });
+    if (this.currentMode === 'traverse') {
+      $(liveviewer).trigger('loppuunClicked');
+    }
+  }.bind(this));
   this.alkuunB.on('click', function() {
-    $(liveviewer).trigger('alkuunClicked');
-  });
+    if (this.currentMode === 'traverse') {
+      $(liveviewer).trigger('alkuunClicked');
+    }
+  }.bind(this));
   this.taakseB.on('click', function() {
-    $(liveviewer).trigger('taakseClicked');
-  });
+    if (this.currentMode === 'traverse') {
+      $(liveviewer).trigger('taakseClicked');
+    }
+  }.bind(this));
   this.liveB.on('click', function() {
+    this.changeButtonsMode('live');
     $(liveviewer).trigger('liveClicked');
-  });
+  }.bind(this));
   this.eteenB.on('click', function() {
-    $(liveviewer).trigger('eteenClicked');
-  });
+    if (this.currentMode === 'traverse') {
+      $(liveviewer).trigger('eteenClicked');
+    }
+  }.bind(this));
   this.traversalB.on('click', function() {
-    $(liveviewer).trigger('traversalClicked');
-  });
+    if (this.currentMode === 'live') {
+      this.changeButtonsMode('traverse');
+      $(liveviewer).trigger('traversalClicked');
+    }
+  }.bind(this));
   this.palaaB.on('click', function() {
-    console.log("Palaa button clicked");
-    $(liveviewer).trigger('palaaClicked');
-  });
+
+      console.log("Palaa button clicked");
+
+      $(liveviewer).trigger('palaaClicked');
+    
+  }.bind(this));
 }
 
 //liveviewer.network = new TestNetWork();
@@ -827,7 +1667,8 @@ liveviewer.Constructors.PelitLista = function($el) {
     this.cachedGames;
     this.selectedID;
 
-    this.showModes = ['all', 'running', 'finished'];
+    this.showModes = ['primary', 'success', 'danger'];
+    this.showTexts = ['Kaikki', 'Kesken', 'Ohi'];
     this.currentShowMode = 0;
 
     this.showSelection = $el.find('#selectGamesShow');
@@ -842,8 +1683,8 @@ liveviewer.Constructors.PelitLista = function($el) {
         this.currentShowMode = 0;
       }
 
-      this.showSelection.empty().append("Show " + this.showModes[this.currentShowMode]);
-      this.showSelection.removeClass('all running finished').addClass(this.showModes[this.currentShowMode]);
+      this.showSelection.empty().append(this.showTexts[this.currentShowMode]);
+      this.showSelection.removeClass('btn-primary btn-danger btn-success').addClass("btn-" + this.showModes[this.currentShowMode]);
       this.updateAll();
 
     }
@@ -915,7 +1756,7 @@ liveviewer.Constructors.PelitLista = function($el) {
     }
 
 
-    $(liveviewer).on('kibitzEnded', function() {
+    $(liveviewer).on('kibitzAndTraverseEnded', function() {
       this.dropGameSelection();
     }.bind(this));
 
@@ -966,7 +1807,7 @@ liveviewer.States.LobbyState = function() {
   };
 
   this.name = 'lobby';
-  this.goTos = ['kibitz', 'creation', 'log'];
+  this.goTos = ['kibitz', 'creation', 'log', 'adminSetup'];
 
   this.canGoTo = function(state) {
 
@@ -997,7 +1838,7 @@ liveviewer.States.TraversalState = function() {
   this.currentGame;
   this.name = 'traversal';
 
-  this.goTos = ['kibitz', 'traversal', 'lobby'];
+  this.goTos = ['kibitz', 'traversal', 'lobby', 'adminSetup', 'creation'];
 
   this.setCurrentGame = function(gameID) {
 
@@ -1027,9 +1868,13 @@ liveviewer.States.TraversalState = function() {
     }
 
   }
-  this.leavingThisState = function() {
+  this.leavingThisState = function(to) {
 
-    
+    if (to.name !== 'kibitz') {
+      $(liveviewer).trigger('kibitzAndTraverseEnded');
+    }
+
+    $(liveviewer).trigger('traverseEnded');
   }
 }
 
@@ -1043,7 +1888,7 @@ liveviewer.States.KibitzState = function() {
   this.currentGame;
   this.name = 'kibitz';
 
-  this.goTos = ['kibitz', 'traversal', 'lobby'];
+  this.goTos = ['kibitz', 'traversal', 'lobby', 'adminSetup', 'log', 'creation'];
 
   this.setCurrentGame = function(gameID) {
 
@@ -1073,23 +1918,26 @@ liveviewer.States.KibitzState = function() {
     }
 
   }
-  this.leavingThisState = function() {
+  this.leavingThisState = function(to) {
 
     // Leaving kibitz state resets are highlights on pelitLista
-    $(liveviewer).trigger('kibitzEnded');
+    if (to.name !== 'traversal') {
+      $(liveviewer).trigger('kibitzAndTraverseEnded');
+    }
+    
   }
 }
 
 liveviewer.States.CreationState = function() {
 
-  var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+  var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
   this.stateVars = {
     gamePosition: START
   };
 
   this.name = 'creation';
-  this.goTos = ['setupPosition', 'lobby'];
+  this.goTos = ['setupPosition', 'lobby', 'log', 'adminSetup', 'kibitz'];
 
   this.canGoTo = function(state) {
 
@@ -1118,9 +1966,10 @@ liveviewer.States.CreationState = function() {
 
   this.setPosition = function(position) {
 
-    if (!position) {
+    if (!position || position === 'start') {
       this.stateVars.gamePosition = START;
     }
+
     else {
       this.stateVars.gamePosition = position;
     }
@@ -1148,8 +1997,11 @@ liveviewer.States.CreationState = function() {
     $(liveviewer).trigger('creationFormUIUpdate', [this.stateVars.gamePosition]);
 
   }
-  this.leavingThisState = function() {
+  this.leavingThisState = function(to) {
 
+    if (to && to.name === 'setupPosition') {
+      return; // do nothing, we want to preserve input values
+    }
     $(liveviewer).trigger('emptyCreationForm');
   }
 }
@@ -1157,6 +2009,7 @@ liveviewer.States.CreationState = function() {
 liveviewer.States.SetupPositionState = function() {
 
   var START = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR';
+  var EMPTY = '8/8/8/8/8/8/8/8';
 
   this.stateVars = {
     gamePosition: START,
@@ -1165,6 +2018,7 @@ liveviewer.States.SetupPositionState = function() {
     whiteCastle: '-',
     blackCastle: '-'
   };
+
 
   this.name = 'setupPosition';
   this.goTos = ['creation'];
@@ -1198,6 +2052,7 @@ liveviewer.States.SetupPositionState = function() {
 
       return {
         'gamePosition': this.stateVars.gamePosition + ' ' +  this.stateVars.toMove + ' ' + this.castleString() + ' - 0 ' + this.stateVars.moveNumber
+
       };
     }
 
@@ -1213,7 +2068,13 @@ liveviewer.States.SetupPositionState = function() {
   this.setPosition = function(position) {
 
     if (!position) {
+      return;
+    }
+    else if (position === 'start') {
       position = START;
+    }
+    else if (position === 'empty') {
+      position = EMPTY;
     }
 
     this.stateVars.gamePosition = position;
@@ -1236,15 +2097,15 @@ liveviewer.States.SetupPositionState = function() {
 
 }
 
-liveviewer.States.LogState = function() {
+liveviewer.States.AdminSetupState = function() {
 
 
   this.stateVars = {
 
   };
 
-  this.name = 'log';
-  this.goTos = ['lobby'];
+  this.name = 'adminSetup';
+  this.goTos = ['lobby', 'log', 'kibitz', 'creation'];
 
   this.canGoTo = function(state) {
 
@@ -1272,10 +2133,47 @@ liveviewer.States.LogState = function() {
 
 }
 
-liveviewer.Constructors.ViewSwitcher = function($kibitzView, $lobbyView, $creationView, $setupPositionView, $logView) {
 
-  this.statesWithViews = ['kibitz', 'lobby', 'creation', 'setupPosition', 'log'];
-  this.views = [$kibitzView, $lobbyView, $creationView, $setupPositionView, $logView];
+liveviewer.States.LogState = function() {
+
+
+  this.stateVars = {
+
+  };
+
+  this.name = 'log';
+  this.goTos = ['lobby', 'adminSetup', 'creation', 'kibitz'];
+
+  this.canGoTo = function(state) {
+
+    return (this.goTos.indexOf(state.name) !== -1);
+  }
+
+
+  this.getParamsToPassAlong = function(state) {
+
+    return null;
+  }
+
+  this.passParamsFromPrevious = function(params) {
+
+    return null;
+
+  }
+
+  // Destructor
+  this.leavingThisState = function() {
+
+    return null;
+  }
+  
+
+}
+
+liveviewer.Constructors.ViewSwitcher = function($kibitzView, $lobbyView, $creationView, $setupPositionView, $logView, $adminView) {
+
+  this.statesWithViews = ['kibitz', 'lobby', 'creation', 'setupPosition', 'log', 'adminSetup'];
+  this.views = [$kibitzView, $lobbyView, $creationView, $setupPositionView, $logView, $adminView];
 
   this.switchTo = function(to, from) {
 
@@ -1293,9 +2191,6 @@ liveviewer.Constructors.ViewSwitcher = function($kibitzView, $lobbyView, $creati
 
     this.views[idx].show();
 
-
-
-
   }
 
   $(liveviewer).on('stateChangeConfirmed', function(e, to, from) {
@@ -1309,6 +2204,31 @@ liveviewer.Constructors.StateController = function() {
   this.states = {};
 
   this.runningModNumber = 0;
+
+  this.adminPasswordChangeResult = function(resObj) {
+
+    if (resObj) {
+      // Change has been successfull
+      $(liveviewer).trigger('adminKeyHasBeenChanged', resObj.adminKey);
+    }
+    else {
+      $(liveviewer).trigger('notification', {tag: 'danger', content: 'Admin-salasanan muutos epäonnistui'});
+    }
+  }
+
+  this.adminLogInResult = function(logInResult) {
+
+
+    if (logInResult.result) {
+      liveviewer.netWork.adminKey = logInResult.adminKey;
+      $(liveviewer).trigger('adminConfirmed');
+      $(liveviewer).trigger('notification', [{tag: 'success', content: 'Authorization successfull - you are logged in as admin'}]);
+    }
+
+    else {
+      $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Authorization failed - check your password'}]);
+    }
+  }
 
   this.resultWasSet = function(game) {
 
@@ -1324,8 +2244,17 @@ liveviewer.Constructors.StateController = function() {
   }
 
   this.gameCreated = function(games) {
+    console.log(games);
+    if (!games) {
+      $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Pelin luonti epäonnistui'}]);
+
+      // For testing
+      $(liveviewer).trigger('endTestCreation');
+      return;
+    }
 
     $(liveviewer).trigger('gameListUpdate', [games]);
+    $(liveviewer).trigger('notification', [{tag: 'success', content: 'Uusi peli luotu! Voit valita pelin alalaidan pelivalikosta.'}]);
 
 
   }
@@ -1353,7 +2282,7 @@ liveviewer.Constructors.StateController = function() {
     }
 
     var gameID = this.currentState.stateVars.currentGame;
-    liveviewer.netWork.send('setResultForGame', {gameID: gameID, result: result});
+    liveviewer.netWork.send('setResultForGame', {gameID: gameID, result: result}, true);
 
   }
 
@@ -1364,7 +2293,7 @@ liveviewer.Constructors.StateController = function() {
 
   this.moveAccepted = function(resObj) {
 
-    if (this.currentState.name !== 'kibitz' || this.currentState.stateVars.currentGame !== resObj.gameID) {
+    if (this.currentState.name !== 'kibitz' || this.currentState.stateVars.currentGame !== resObj.content.gameID) {
       // No need to update board
       console.log(this.currentState);
       console.log(this.currentState.stateVars.currentGame);
@@ -1373,7 +2302,7 @@ liveviewer.Constructors.StateController = function() {
       return;
     }
 
-    $(liveviewer).trigger('updateBoardPosition', [resObj]);
+    $(liveviewer).trigger('updateBoardPosition', [resObj.content]);
     
 
   }
@@ -1402,7 +2331,8 @@ liveviewer.Constructors.StateController = function() {
   this.kibitzGame = function(gameID) {
     if (this.currentState.name === 'kibitz' || this.stateChange(new liveviewer.States.KibitzState())) {
       this.currentState.stateVars.currentGame = gameID;
-      $(liveviewer).trigger('loadingGame');
+      //$(liveviewer).trigger('loadingGame');
+      $(liveviewer).trigger('gameChanged');
       $(liveviewer).trigger('fetchGameDataForKibitz', [gameID]);
 
     }
@@ -1413,6 +2343,26 @@ liveviewer.Constructors.StateController = function() {
     if (this.states.hasOwnProperty(stateName)) {
       this.currentState = this.states[stateName];
       console.log("STATECONTROLLER: Initial state set: " + stateName);
+    }
+
+
+  }
+
+  this.positionOverrideReceived = function(game) {
+
+    console.log("POS OVBERRIDE");
+    console.log(game);
+
+    if (game && game.content) {
+
+      // Override was clearly successfull
+      this.stateChange(new liveviewer.States.KibitzState());
+      this.receivedGameData(game.content); 
+      $(liveviewer).trigger('positionOverrideSuccess');
+    }
+    else {
+
+      $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Position could not be reset'}]);
     }
 
 
@@ -1443,7 +2393,9 @@ liveviewer.Constructors.StateController = function() {
       return false;
     }
 
-    $(liveviewer).trigger('sendMoveToServer', [this.currentState.stateVars.currentGame, move]);
+    liveviewer.netWork.send('newPossibleMove', {gameID: this.currentState.stateVars.currentGame, move: move}, true);
+
+    //$(liveviewer).trigger('sendMoveToServer', [this.currentState.stateVars.currentGame, move]);
 
   }
 
@@ -1462,6 +2414,7 @@ liveviewer.Constructors.StateController = function() {
     }
 
     $(liveviewer).trigger('updateBoardPosition', [positionObj]);
+
   }
 
   this.isState = function(stateName) {
@@ -1482,8 +2435,8 @@ liveviewer.Constructors.StateController = function() {
     var gameID = this.currentState.stateVars.currentGame;
     var position = liveviewer.traverser.getCurrentPosition();
     console.log("CONTROLLER: Informing network that we need to override from game: " + gameID);
-    liveviewer.netWork.send('positionOverride', {gameID: gameID, position: position});
-    this.stateChange(new liveviewer.States.KibitzState(gameID, false));
+    liveviewer.netWork.send('positionOverride', {gameID: gameID, position: position}, true);
+    //this.stateChange(new liveviewer.States.KibitzState(gameID, false));
 
 
   }
@@ -1522,7 +2475,7 @@ liveviewer.Constructors.StateController = function() {
       var from = this.currentState;
       // Inform to-be-leaved state that it must do all mopping now or never
       if (from) {
-        from.leavingThisState();
+        from.leavingThisState(to);
       }
 
       this.currentState = to;
@@ -1534,15 +2487,58 @@ liveviewer.Constructors.StateController = function() {
     return false;
   }
 
+/*  $(liveviewer).on('fetchIntervalChanged', function(e, newInterval) {
+    if (this.isState('adminSetup')) {
+      $(liveviewer).trigger('fetchIntervalChangedConfirmed', [newInterval]);
+    }
+  }.bind(this));*/
+
+  $(liveviewer).on('adminPasswordChangeInitiated', function(e, newPassword) {
+
+    if (this.isState('adminSetup')) {
+      liveviewer.netWork.send('adminPasswordChange', {password: newPassword}, true);
+    }
+
+
+  }.bind(this));
+
+  $(liveviewer).on('positionFetchFromTimer', function() {
+    console.log("CONTROLLER: Timer has request position update");
+    if (this.currentState.name === 'kibitz') {
+      var gameID = this.currentState.stateVars.currentGame;
+      console.log("CONTROLLER: Position update req forwarded to network for game: " + gameID);
+      liveviewer.netWork.send('fetchLatestPosition', {gameID: gameID}, false);
+
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('showAdminClicked', function() {
+
+    this.stateChange(new liveviewer.States.AdminSetupState());
+  }.bind(this));
+
+  $(liveviewer).on('adminLoginInitiated', function(e, password) {
+
+    if (this.isState('adminSetup')) {
+
+      liveviewer.netWork.send('adminLoginAttempt', {password: password}, false);
+    }
+
+  }.bind(this));
+
   $(liveviewer).on('submitGameClicked', function(e, white, black) {
     if (this.isState('creation')) {
-      if (this.currentState.validateData(white, black)) {
-        console.log("Validation success");
-        this.currentState.getPosition();
-        liveviewer.netWork.submitNewGame(liveviewer.tournamentID, white, black, this.currentState.getPosition());
-        this.stateChange(new liveviewer.States.LobbyState());
+      if (!this.currentState.validateData(white, black)) {
+        $(liveviewer).trigger('notification', [{tag: 'danger', content: 'Data invalid - check player names and position fen'}, true]);
+        return;
       }
-
+      console.log("Validation success");
+      this.currentState.getPosition();
+      liveviewer.netWork.send('submitNewGame', {white: white, black: black, position: this.currentState.getPosition()}, true);
+      $(liveviewer).trigger('notification', [{tag: 'warning', content: 'Game creation request sent to server...'}, true]);
+      this.stateChange(new liveviewer.States.LobbyState());
+      
     }
 
   }.bind(this));
@@ -1586,19 +2582,12 @@ liveviewer.Constructors.StateController = function() {
     // Nothing at this moment
   }.bind(this));
 
-  $(liveviewer).on('showLogClicked', function() {
-    if (this.isState('lobby')) {
-      this.stateChange(new liveviewer.States.LogState());
-    }
-
+  $(liveviewer).on('showLogClicked', function() {   
+    this.stateChange(new liveviewer.States.LogState());
   }.bind(this));
 
   $(liveviewer).on('backToLobbyClicked', function() {
-
-    if (this.isState('log')) {
-      this.stateChange(new liveviewer.States.LobbyState());
-    }
-
+    this.stateChange(new liveviewer.States.LobbyState());
   }.bind(this));
 
   $(liveviewer).on('resultClicked', function(e, result) {
@@ -1607,17 +2596,22 @@ liveviewer.Constructors.StateController = function() {
   }.bind(this));
 
   $(liveviewer).on('initialPositionClicked', function(e) {
-    if (this.isState('creation')) {
-      this.currentState.setPosition();
-
-    };
+      this.currentState.setPosition('start');
+    
 
   }.bind(this));  
 
   $(liveviewer).on('initialSetupClicked', function(e) {
     if (this.isState('setupPosition')) {
-      this.currentState.setPosition();
-    }
+      this.currentState.setPosition('start');
+    } 
+  }.bind(this));
+
+  $(liveviewer).on('emptySetupClicked', function(e) {
+
+    if (this.isState('setupPosition')) {
+      this.currentState.setPosition('empty');
+    } 
   }.bind(this));
 
   $(liveviewer).on('cancelSetupClicked', function(e) {
@@ -1626,6 +2620,10 @@ liveviewer.Constructors.StateController = function() {
       this.stateChange(new liveviewer.States.CreationState(), true);
     }
 
+  }.bind(this));
+
+  $(liveviewer).on('toCreationClicked', function() {
+    this.stateChange(new liveviewer.States.CreationState());
   }.bind(this));
 
   $(liveviewer).on('toLobbyClicked', function() {
@@ -1713,7 +2711,8 @@ liveviewer.Constructors.Traverser = function() {
 
   this.reset = function() {
 
-
+    this.positions = [];
+    this.currPosition = 0;
   }
 
   $(liveviewer).on('stateChangeConfirmed', function(e, state) {
@@ -1760,24 +2759,85 @@ liveviewer.Constructors.Traverser = function() {
   }.bind(this));  
 }
 
-liveviewer.Constructors.GameHeaders = function($el) {
+liveviewer.Constructors.GameHeaders = function($whiteHeaders, $blackHeaders, $resultBox, $lastMoveBox) {
 
-  this.$el = $el;
+  this.whiteH = $whiteHeaders;
+  this.blackH = $blackHeaders;
 
-  this.whiteName = $el.find('#whiteName');
+  this.resultBox = $resultBox;
+  this.lastMoveBox = $lastMoveBox;
+
+  //this.$el = $el;
+
+/*  this.whiteName = $el.find('#whiteName');
   this.blackName = $el.find('#blackName');
-  this.result    = $el.find('#result');
+  this.result    = $el.find('#result');*/
+
+  this.resultConversions = {
+    'w': '1-0',
+    'd': '1/2',
+    'b': '0-1',
+     0 : '*'
+  };
 
   this.updateHeaders = function(game) {
 
-    this.whiteName.empty().append(game.white);
-    this.blackName.empty().append(game.black);
-    this.result.empty().append(game.result);
+    this.whiteH.empty().append(game.white);
+    this.blackH.empty().append(game.black);
+
+    var textResult = '?';
+
+    if (this.resultConversions.hasOwnProperty(game.result)) {
+       textResult = this.resultConversions[game.result];
+    }
+
+    this.resultBox.empty().append(textResult);
+  }
+
+  this.updateLastMove = function(fen, lastSan) {
+
+    this.lastMoveBox.empty();
+
+    if (!lastSan) {
+      return; // no previous move, initial position
+    }
+    // parts[1] is to move
+    // parts[5] is next move number
+    var parts = fen.split(" ");
+    console.log("VUORO: " + parts[1]);
+    var moveString = (parts[1] === 'w' ? (parseInt(parts[5])-1) + '...' : parts[5] + '.') + lastSan;
+    this.lastMoveBox.append(moveString);
+  }
+
+  this.headersOpposite = function() {
+
+    this.blackH.removeClass('upperGameHeader').addClass('lowerGameHeader');
+    this.whiteH.removeClass('lowerGameHeader').addClass('upperGameHeader');
+  }
+
+  this.headersNormal = function() {
+
+    this.whiteH.removeClass('upperGameHeader').addClass('lowerGameHeader');
+    this.blackH.removeClass('lowerGameHeader').addClass('upperGameHeader');
   }
 
   $(liveviewer).on('updateGameViewHeaders', function(e, game) {
     console.log("GAME HEADERS: Updating headers");
     this.updateHeaders(game);
+  }.bind(this));
+
+  $(liveviewer).on('boardOrientationUpdated', function(e, orientation) {
+    if (orientation === 'white') {
+      this.headersNormal();
+    }
+    else if (orientation === 'black') {
+      this.headersOpposite();
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('updateBoardPosition', function(e, posObj) {
+    this.updateLastMove(posObj.pos, posObj.move);
   }.bind(this));
 } 
 
@@ -1793,6 +2853,11 @@ liveviewer.Constructors.BoardWrapper = function($el, chessBoardInstance) {
   this.showBoard = function() {
 
     this.$el.show();
+  }
+
+  this.clearBoard = function() {
+
+    this.chessBoardInstance.clear();
   }
 
   this.updatePosition = function(fen) {
@@ -1870,6 +2935,14 @@ liveviewer.Constructors.BoardWrapper = function($el, chessBoardInstance) {
     
   }
 
+  this.flipBoard = function() {
+
+    this.chessBoardInstance.flip();
+
+    $(liveviewer).trigger('boardOrientationUpdated', [this.chessBoardInstance.orientation()]);
+
+  }
+
   this.prepareBoardForGame = function(color) {
 
     console.log("BOARD_MOD: Preparing board for new game...");
@@ -1877,6 +2950,19 @@ liveviewer.Constructors.BoardWrapper = function($el, chessBoardInstance) {
     this.chessBoardInstance.start();
     this.setSide(color);
   }
+
+  $(liveviewer).on('stateChangeConfirmed', function(e, to) {
+
+    if (to.name !== 'kibitz' && to.name !== 'traversal') {
+      // Clearing board up before moving on
+      this.clearBoard();
+    }
+
+  }.bind(this));
+
+  $(liveviewer).on('flipBoardClicked', function() {
+    this.flipBoard();
+  }.bind(this));
 
     $(liveviewer).on('updateBoardPosition.boardMod', function(e, posObj) {
 
@@ -1992,12 +3078,12 @@ $(liveviewer).on('stateChangeConfirmed', function(e, to) {
 
   if (to.name === 'kibitz') {
 
-    $('body').css('background-color', '#72ffce');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   else if (to.name === 'traversal') {
 
-    $('body').css('background-color', '#ff72ce');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   else if (to.name === 'lobby') {
@@ -2007,26 +3093,32 @@ $(liveviewer).on('stateChangeConfirmed', function(e, to) {
 
   else if (to.name === 'creation') {
 
-    $('body').css('background-color', '#aa52cf');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   else if (to.name === 'setupPosition') {
 
-    $('body').css('background-color', '#e8feff');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   else if (to.name === 'log') {
 
-    $('body').css('background-color', '#33eeac');
+    $('body').css('background-color', '#EEEEEE');
   }
 
   
 
 });
 
-$(liveviewer).on('operationFailed', function() {
+$(liveviewer).on('operationFailed', function(e, msg) {
 
-  alert('Something went wrong');
+  if (msg) {
+    alert(msg);
+  }
+  else {
+    alert('Something went wrong');
+  }
+  
 });
 
   </script>

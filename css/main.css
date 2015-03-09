@@ -2,7 +2,7 @@
    HTML5 Boilerplate styles - h5bp.com (generated via initializr.com)
    ========================================================================== */
 html, body {
-    font-family Arial,​Helvetica,​"Helvetica Neue",​Geneva,​sans-serif
+    font-family sans-serif
     background-color: #e1e1e1;
     margin: 0;
     padding: 0;
@@ -157,6 +157,15 @@ div.gameLauta {
     position: absolute;
 }
 
+div.gameLautaSmaller {
+
+    width: 316px;
+    height: 316px;
+    top: 50px;
+    left: 20px;
+    position: absolute;
+}
+
 div.gameOikea, div.gameVasen {
 
     width: 160px;
@@ -246,6 +255,78 @@ ul#msgStream li {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+
+/* For game headers flipping */
+
+div.lowerGameHeader {
+
+    top: 466px;
+} 
+
+div.upperGameHeader {
+
+    top: 10px;
+} 
+
+/* Same for move indicators */
+
+div.upperMoveIndicator {
+    top: 0px;
+}
+
+div.lowerMoveIndicator {
+    bottom: 0px;
+}
+
+div#ss_peliHeadersWhite, div#ss_peliHeadersBlack {
+
+    font-size: 24px;
+    text-align: center;
+
+}
+
+div#ss_peliHeadersWhite {
+    background-color: white;
+    color: #32404E;
+}
+
+div#ss_peliHeadersBlack {
+    background-color: #32404E;
+    color: white;
+}
+
+.wrap { 
+   white-space: pre-wrap;      /* CSS3 */   
+   white-space: -moz-pre-wrap; /* Firefox */    
+   white-space: -pre-wrap;     /* Opera <7 */   
+   white-space: -o-pre-wrap;   /* Opera 7 */    
+   word-wrap: break-all;      /* IE */
+}
+
+p.panelInfoText {
+
+    font-size: 11px;
+}   
+
+div#emptyNappula {
+    width: 30px;
+    height: 30px;
+    background-color: #E37854;
+    position: absolute;
+    top: 340px;
+    left: 24px;
+}   
+
+button {
+    outline: 0; 
+    border: 1px solid #BBB; 
+    margin: 0;
+}
+button.gameButton {
+    
+    width: 100px;
+    margin-bottom: 6px;
+}   
 #selectGamesShow {
 
     cursor: pointer;
@@ -254,7 +335,7 @@ ul#msgStream li {
 
 #selectGamesShow.all {
 
-    background-color: #fff;
+    
 }
 
 #selectGamesShow.running {
@@ -266,18 +347,33 @@ ul#msgStream li {
     background-color: #FFD6CC;
 }
 
+div.blinkerOn {
+
+    background-color: #DFF0D8;
+}
+
+div.blinkerOff {
+
+    background-color: white;
+}
+
+div.blinkerError {
+
+    background-color: #EDA98E;
+}
+
 
 
 span.whitePlayerSpan {
 
-    width: 80px;
+    width: 90px;
     height: 16px;
 
     color: #333;
     top: 2px;
-    left: 10px;
+    left: 2px;
     position: absolute;
-    font-size: 11px;
+    font-size: 10px;
     text-align: center;
     overflow: hidden;
 }
@@ -286,12 +382,12 @@ span.whitePlayerSpan {
 span.blackPlayerSpan {
     text-align: center;
     color: #333;
-    width: 80px;
+    width: 90px;
     height: 16px;
     position: absolute;
     bottom: 2px;
-    left: 10px;
-    font-size: 11px;
+    left: 2px;
+    font-size: 10px;
     overflow: hidden;
 
 
@@ -311,11 +407,20 @@ span.whiteResultSpan {
 
 }
 
+div.sideBarTab {
+
+
+    width: 42px;
+    height: 42px;
+    margin: auto;
+    margin-top: 4px;
+}
+
 div.panelTab {
 
     text-align: center;
     padding-top: 4px;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 span.blackResultSpan {
@@ -334,6 +439,7 @@ span.blackResultSpan {
 ul.pelitLista2 {
 
     padding: 4px;
+
 }
 
 ul.pelitLista2 li {
@@ -341,18 +447,19 @@ ul.pelitLista2 li {
     width: 120px;
     height: 46px;
     border: 1px solid #BBB;
-    background-color: #EEE;
     margin: 1px;
     padding: 4px;
     position: relative;
     display: inline-block;
+    word-wrap: break-word;
+    white-space: nowrap;
+    overflow: hidden;
 
 }
 
 div.innerPanel {
 
-    border: 1px solid #BBB;
-    position: absolute;
+  
     background-color: #fff;
 
 }
@@ -360,13 +467,21 @@ div.innerPanel {
 div#liveViewerApp {
 
     width: 720px;
-    height: 750px;
+    min-height: 700px;
+    max-height: 890px;
     margin: auto;
     margin-top: 20px;
-    background-color: #C9CBC6;
+    background-color: #FFFFFF;
     border: 1px solid #BBB;
-    position: relative;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;  
 
+}
+
+div.alertCentered {
+
+    text-align: center;
 }
 
 
@@ -376,9 +491,10 @@ div.ss_view {
     position: absolute;
     top: 60px;
     left: 65px;
-    width: 640px;
-    height: 550px;
-    background-color: #fff;
+    width: 654px;
+    height: 530px;
+    background-color: #E7EBEE;
+    overflow: hidden;
 
 }
 
@@ -402,13 +518,13 @@ div.squareClicked {
 
 .selectedGame {
 
-    background-color: #628eec;
+    background-color: #DFF0D8;
 
 }
 
 .notSelectedGame {
 
-    background-color: #de8112;
+    background-color: #eee;
 }
 
 .selectedPiece {
@@ -418,24 +534,33 @@ div.squareClicked {
     border-color: red;
 }
 
+ul.logsList {
+
+    margin-bottom: 20px;
+    max-height: 453px;
+    overflow: auto;
+}
+
+
+
 ul.logsList li.danger {
 
-    color: red;
+    color: #D56242;
 }
 
 ul.logsList li.info {
 
-    color: blue;
+    color: #31708F;
 }
 
 ul.logsList li.warning {
 
-    color: yellow;
+    color: #F5CF6A;
 }
 
 ul.logsList li.success {
 
-    color: green;
+    color: #62823E;
 }
 
 
